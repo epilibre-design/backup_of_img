@@ -5,6 +5,7 @@
     etat="dev"
     compatibilite="[4.4.0;4.*]"
     schema="1.0.0"
+    logo="images/backup_img-128.svg"
 >
     <nom>Backup IMG</nom>
     <!-- Sauvegarde automatique du dossier IMG/ en ZIP, stockage local et FTP -->

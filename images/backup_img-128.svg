@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <clipPath id="photo">
+      <rect x="12" y="16" width="104" height="76" rx="8"/>
+    </clipPath>
+  </defs>
+
+  <!-- Fond bleu arrondi -->
+  <rect width="128" height="128" rx="20" fill="#1e40af"/>
+
+  <!-- Ciel de la photo -->
+  <rect x="12" y="16" width="104" height="76" rx="8" fill="#93c5fd"/>
+
+  <!-- Paysage (clippé dans le cadre) -->
+  <g clip-path="url(#photo)">
+    <!-- Montagne arrière -->
+    <polygon points="12,92 50,34 88,92" fill="#166534"/>
+    <!-- Montagne avant -->
+    <polygon points="52,92 86,48 120,92" fill="#15803d"/>
+    <!-- Sol -->
+    <rect x="12" y="84" width="104" height="8" fill="#14532d"/>
+    <!-- Soleil -->
+    <circle cx="97" cy="30" r="12" fill="#fde047"/>
+  </g>
+
+  <!-- Cadre de la photo -->
+  <rect x="12" y="16" width="104" height="76" rx="8" fill="none" stroke="white" stroke-width="3"/>
+
+  <!-- Flèche circulaire de sauvegarde (centre 64,112, rayon 11) -->
+  <!-- Arc de 270° dans le sens horaire : de (53,112) à (64,123) -->
+  <path d="M 53 112 A 11 11 0 1 1 64 123"
+        fill="none" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <!-- Tête de flèche à (64,123) pointant vers la droite (tangente horaire à 6h) -->
+  <polygon points="62,119 70,123 62,127" fill="white"/>
+</svg>
