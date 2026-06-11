@@ -7,27 +7,9 @@
         "php": "^8.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^13.0",
-        "spip/spip-cli": "dev-master",
-        "spip/tests": "dev-master"
+        "phpunit/phpunit": "^11.0"
     },
-    "repositories": [
-        {
-            "name": "spip",
-            "type": "composer",
-            "url": "https://get.spip.net/composer"
-        },
-        {
-            "name": "spip-cli",
-            "type": "vcs",
-            "url": "https://git.spip.net/spip/spip-cli.git"
-        },
-        {
-            "name": "spip-tests",
-            "type": "vcs",
-            "url": "https://git.spip.net/spip/tests.git"
-        }
-    ],
+    "repositories": [],
     "scripts": {
         "install-spip-test": "sh scripts/install-spip-test.sh",
         "tests-unit": "vendor/bin/phpunit --colors --testsuite unit",
