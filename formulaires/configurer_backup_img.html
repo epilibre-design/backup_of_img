@@ -1,42 +1,50 @@
 <div class="formulaire_spip formulaire_configurer formulaire_configurer_backup_img">
-  [<div class="reponse_formulaire reponse_formulaire_ok" role="status">(#ENV*{message_ok})</div>]
-  [<div class="reponse_formulaire reponse_formulaire_erreur" role="alert">(#ENV*{message_erreur})</div>]
+<h3 class="titrem">[(#CHEMIN{images/backup_img-128.svg}|balise_img{'',cadre-icone})]<:backup_img:titre_menu:></h3>
 
-  [(#ENV{editable}|oui)
-  <form method="post" action="#ENV{action}"><div>
-    #ACTION_FORMULAIRE
+[<div class="reponse_formulaire reponse_formulaire_ok" role="status">(#ENV*{message_ok})</div>]
+[<div class="reponse_formulaire reponse_formulaire_erreur" role="alert">(#ENV*{message_erreur})</div>]
 
-    <h3><:backup_img:titre_section_general:></h3>
+[(#ENV{editable}|oui)
+<form method="post" action="#ENV{action}"><div>
+  #ACTION_FORMULAIRE
 
+  <fieldset>
+    <legend><:backup_img:titre_section_general:></legend>
     <div class="editer-groupe">
       <div class="editer editer_prefixe">
         <label for="prefixe"><:backup_img:champ_prefixe:></label>
+        [<span class="erreur_message">(#ENV*{erreurs/prefixe})</span>]
         <input type="text" name="prefixe" id="prefixe" value="[(#ENV{prefixe}|sinon{backup_img})]" class="text" />
       </div>
 
       <div class="editer editer_format_date">
         <label for="format_date"><:backup_img:champ_format_date:></label>
+        [<span class="erreur_message">(#ENV*{erreurs/format_date})</span>]
         <input type="text" name="format_date" id="format_date" value="[(#ENV{format_date}|sinon{Ymd_His})]" class="text" />
         <p class="explication">Format PHP date() ex. <code>Ymd_His</code> → <code>20250611_143022</code></p>
       </div>
 
       <div class="editer editer_dossier_local">
         <label for="dossier_local"><:backup_img:champ_dossier_local:></label>
+        [<span class="erreur_message">(#ENV*{erreurs/dossier_local})</span>]
         <input type="text" name="dossier_local" id="dossier_local" value="[(#ENV{dossier_local}|sinon{tmp/backup_img/})]" class="text" />
-        <p class="explication">Chemin relatif à la racine du site SPIP</p>
+        <p class="explication"><:backup_img:explication_dossier_local:></p>
       </div>
     </div>
+  </fieldset>
 
-    <h3><:backup_img:titre_section_rotation:></h3>
-
+  <fieldset>
+    <legend><:backup_img:titre_section_rotation:></legend>
     <div class="editer-groupe">
       <div class="editer editer_max_sauvegardes">
         <label for="max_sauvegardes"><:backup_img:champ_max_sauvegardes:></label>
+        [<span class="erreur_message">(#ENV*{erreurs/max_sauvegardes})</span>]
         <input type="number" name="max_sauvegardes" id="max_sauvegardes" value="[(#ENV{max_sauvegardes}|sinon{10})]" min="1" max="100" class="text" />
       </div>
 
       <div class="editer editer_max_espace_mo">
         <label for="max_espace_mo"><:backup_img:champ_max_espace_mo:></label>
+        [<span class="erreur_message">(#ENV*{erreurs/max_espace_mo})</span>]
         <input type="number" name="max_espace_mo" id="max_espace_mo" value="[(#ENV{max_espace_mo}|sinon{500})]" min="1" class="text" />
       </div>
 
@@ -50,14 +58,21 @@
         </select>
       </div>
     </div>
+  </fieldset>
 
-    <h3><:backup_img:titre_section_ftp:></h3>
-
+  <fieldset>
+    <legend><:backup_img:titre_section_ftp:></legend>
     <div class="editer-groupe">
       <div class="editer editer_ftp_actif">
         <label><:backup_img:champ_ftp_actif:></label>
-        <label><input type="radio" name="ftp_actif" value="1"[(#ENV{ftp_actif}|=={1}|oui) checked="checked"] /> Oui</label>
-        <label><input type="radio" name="ftp_actif" value="0"[(#ENV{ftp_actif}|=={0}|oui) checked="checked"] /> Non</label>
+        <div class="choix">
+          <input type="radio" name="ftp_actif" id="ftp_actif_oui" value="1"[(#ENV{ftp_actif}|=={1}|oui) checked="checked"] />
+          <label for="ftp_actif_oui"><:item_oui:></label>
+        </div>
+        <div class="choix">
+          <input type="radio" name="ftp_actif" id="ftp_actif_non" value="0"[(#ENV{ftp_actif}|=={0}|oui) checked="checked"] />
+          <label for="ftp_actif_non"><:item_non:></label>
+        </div>
       </div>
 
       <div class="editer editer_ftp_hote">
@@ -89,10 +104,11 @@
         <input type="submit" name="_test_ftp" value="<:backup_img:bouton_tester_ftp:>" class="btn" />
       </div>
     </div>
+  </fieldset>
 
-    <p class="boutons">
-      <input type="submit" value="<:bouton_enregistrer:>" class="btn submit" />
-    </p>
-  </div></form>
-  ]
+  <p class="boutons">
+    <input type="submit" value="<:bouton_enregistrer:>" class="btn submit" />
+  </p>
+</div></form>
+]
 </div>

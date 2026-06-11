@@ -23,6 +23,7 @@ return [
 
     // E
     'erreur_creation_dossier'            => 'Cannot create backup folder: @dossier@',
+    'explication_dossier_local'          => 'Path relative to the SPIP site root',
     'erreur_creation_zip'                => 'Error while creating ZIP',
     'erreur_ftp_connexion'               => 'FTP connection failed: @erreur@',
     'erreur_prefixe_invalide'            => 'Prefix must contain only letters, digits, hyphens or underscores',
