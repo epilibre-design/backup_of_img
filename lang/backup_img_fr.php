@@ -25,7 +25,9 @@ return [
     'erreur_creation_dossier'            => 'Impossible de créer le dossier de sauvegarde : @dossier@',
     'erreur_creation_zip'                => 'Erreur lors de la création du ZIP',
     'erreur_ftp_connexion'               => 'Connexion FTP impossible : @erreur@',
+    'erreur_prefixe_invalide'            => 'Le préfixe doit contenir uniquement des lettres, chiffres, tirets ou underscores',
     'erreur_sauvegarde_introuvable'      => 'Sauvegarde introuvable',
+    'erreur_valeur_positive'             => 'La valeur doit être un entier positif',
 
     // I
     'info_aucune_sauvegarde'             => 'Aucune sauvegarde disponible.',

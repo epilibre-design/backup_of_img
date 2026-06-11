@@ -25,7 +25,9 @@ return [
     'erreur_creation_dossier'            => 'Cannot create backup folder: @dossier@',
     'erreur_creation_zip'                => 'Error while creating ZIP',
     'erreur_ftp_connexion'               => 'FTP connection failed: @erreur@',
+    'erreur_prefixe_invalide'            => 'Prefix must contain only letters, digits, hyphens or underscores',
     'erreur_sauvegarde_introuvable'      => 'Backup not found',
+    'erreur_valeur_positive'             => 'Value must be a positive integer',
 
     // I
     'info_aucune_sauvegarde'             => 'No backup available.',

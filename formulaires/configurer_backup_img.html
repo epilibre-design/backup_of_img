@@ -1,0 +1,98 @@
+<div class="formulaire_spip formulaire_configurer formulaire_configurer_backup_img">
+  [<div class="reponse_formulaire reponse_formulaire_ok" role="status">(#ENV*{message_ok})</div>]
+  [<div class="reponse_formulaire reponse_formulaire_erreur" role="alert">(#ENV*{message_erreur})</div>]
+
+  [(#ENV{editable}|oui)
+  <form method="post" action="#ENV{action}"><div>
+    #ACTION_FORMULAIRE
+
+    <h3><:backup_img:titre_section_general:></h3>
+
+    <div class="editer-groupe">
+      <div class="editer editer_prefixe">
+        <label for="prefixe"><:backup_img:champ_prefixe:></label>
+        <input type="text" name="prefixe" id="prefixe" value="[(#ENV{prefixe}|sinon{backup_img})]" class="text" />
+      </div>
+
+      <div class="editer editer_format_date">
+        <label for="format_date"><:backup_img:champ_format_date:></label>
+        <input type="text" name="format_date" id="format_date" value="[(#ENV{format_date}|sinon{Ymd_His})]" class="text" />
+        <p class="explication">Format PHP date() ex. <code>Ymd_His</code> → <code>20250611_143022</code></p>
+      </div>
+
+      <div class="editer editer_dossier_local">
+        <label for="dossier_local"><:backup_img:champ_dossier_local:></label>
+        <input type="text" name="dossier_local" id="dossier_local" value="[(#ENV{dossier_local}|sinon{tmp/backup_img/})]" class="text" />
+        <p class="explication">Chemin relatif à la racine du site SPIP</p>
+      </div>
+    </div>
+
+    <h3><:backup_img:titre_section_rotation:></h3>
+
+    <div class="editer-groupe">
+      <div class="editer editer_max_sauvegardes">
+        <label for="max_sauvegardes"><:backup_img:champ_max_sauvegardes:></label>
+        <input type="number" name="max_sauvegardes" id="max_sauvegardes" value="[(#ENV{max_sauvegardes}|sinon{10})]" min="1" max="100" class="text" />
+      </div>
+
+      <div class="editer editer_max_espace_mo">
+        <label for="max_espace_mo"><:backup_img:champ_max_espace_mo:></label>
+        <input type="number" name="max_espace_mo" id="max_espace_mo" value="[(#ENV{max_espace_mo}|sinon{500})]" min="1" class="text" />
+      </div>
+
+      <div class="editer editer_cron_periode">
+        <label for="cron_periode"><:backup_img:champ_cron_periode:></label>
+        <select name="cron_periode" id="cron_periode">
+          <option value="0"[(#ENV{cron_periode}|=={0}|oui) selected="selected"]><:backup_img:info_cron_desactive:></option>
+          <option value="86400"[(#ENV{cron_periode}|=={86400}|oui) selected="selected"]><:backup_img:info_cron_journalier:></option>
+          <option value="604800"[(#ENV{cron_periode}|=={604800}|oui) selected="selected"]><:backup_img:info_cron_hebdomadaire:></option>
+          <option value="2592000"[(#ENV{cron_periode}|=={2592000}|oui) selected="selected"]><:backup_img:info_cron_mensuel:></option>
+        </select>
+      </div>
+    </div>
+
+    <h3><:backup_img:titre_section_ftp:></h3>
+
+    <div class="editer-groupe">
+      <div class="editer editer_ftp_actif">
+        <label><:backup_img:champ_ftp_actif:></label>
+        <label><input type="radio" name="ftp_actif" value="1"[(#ENV{ftp_actif}|=={1}|oui) checked="checked"] /> Oui</label>
+        <label><input type="radio" name="ftp_actif" value="0"[(#ENV{ftp_actif}|=={0}|oui) checked="checked"] /> Non</label>
+      </div>
+
+      <div class="editer editer_ftp_hote">
+        <label for="ftp_hote"><:backup_img:champ_ftp_hote:></label>
+        <input type="text" name="ftp_hote" id="ftp_hote" value="[(#ENV{ftp_hote})]" class="text" />
+      </div>
+
+      <div class="editer editer_ftp_port">
+        <label for="ftp_port"><:backup_img:champ_ftp_port:></label>
+        <input type="number" name="ftp_port" id="ftp_port" value="[(#ENV{ftp_port}|sinon{21})]" min="1" max="65535" class="text" />
+      </div>
+
+      <div class="editer editer_ftp_login">
+        <label for="ftp_login"><:backup_img:champ_ftp_login:></label>
+        <input type="text" name="ftp_login" id="ftp_login" value="[(#ENV{ftp_login})]" class="text" autocomplete="username" />
+      </div>
+
+      <div class="editer editer_ftp_pass">
+        <label for="ftp_pass"><:backup_img:champ_ftp_pass:></label>
+        <input type="password" name="ftp_pass" id="ftp_pass" value="[(#ENV{ftp_pass})]" class="text" autocomplete="current-password" />
+      </div>
+
+      <div class="editer editer_ftp_dossier">
+        <label for="ftp_dossier"><:backup_img:champ_ftp_dossier:></label>
+        <input type="text" name="ftp_dossier" id="ftp_dossier" value="[(#ENV{ftp_dossier}|sinon{/})]" class="text" />
+      </div>
+
+      <div class="editer">
+        <input type="submit" name="_test_ftp" value="<:backup_img:bouton_tester_ftp:>" class="btn" />
+      </div>
+    </div>
+
+    <p class="boutons">
+      <input type="submit" value="<:config_info_enregistrer:>" class="btn submit" />
+    </p>
+  </div></form>
+  ]
+</div>
