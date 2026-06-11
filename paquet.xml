@@ -23,7 +23,7 @@
         nom="backup_img"
         titre="backup_img:titre_menu"
         parent="menu_administration"
-        icone="images/backup_img-16.svg"
+        icone="images/backup_img-xx.svg"
         action="backup_img"
     />
 </paquet>

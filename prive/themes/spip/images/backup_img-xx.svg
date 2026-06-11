@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <clipPath id="f">
+      <rect x="0" y="0" width="15" height="13" rx="2"/>
+    </clipPath>
+  </defs>
+
+  <!-- Cadre photo -->
+  <rect x="0" y="0" width="15" height="13" rx="2" fill="#7dd3fc"/>
+  <g clip-path="url(#f)">
+    <polygon points="0,13 6,4 12,13" fill="#166534"/>
+    <polygon points="8,13 13,7 18,13" fill="#15803d"/>
+    <circle cx="13" cy="3" r="2" fill="#fde047"/>
+  </g>
+  <rect x="0" y="0" width="15" height="13" rx="2" fill="none" stroke="white" stroke-width="1"/>
+
+  <!-- Flèche circulaire (centre 19,17 rayon 4) -->
+  <!-- Arc 270° horaire : de (15,17) à (19,21) -->
+  <path d="M 15 17 A 4 4 0 1 1 19 21"
+        fill="none" stroke="#1e40af" stroke-width="2" stroke-linecap="round"/>
+  <!-- Tête de flèche à (19,21) pointant vers la droite -->
+  <polygon points="18,19 22,21 18,23" fill="#1e40af"/>
+</svg>
