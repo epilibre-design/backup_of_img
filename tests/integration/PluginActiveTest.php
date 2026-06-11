@@ -14,8 +14,9 @@ final class PluginActiveTest extends TestCase
     public function testPluginEstActif(): void
     {
         include_spip('inc/plugin');
-        $plugins = liste_plugins_actifs();
-        $this->assertArrayHasKey('backup_img', $plugins, 'Le plugin backup_img n\'est pas actif');
+        $plugins = liste_plugin_actifs();
+        $prefixes = array_map('strtolower', array_keys($plugins));
+        $this->assertContains('backup_img', $prefixes, 'Le plugin backup_img n\'est pas actif');
     }
 
     public function testConstantesDisponibles(): void

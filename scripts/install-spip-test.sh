@@ -30,9 +30,10 @@ fi
 
 cd "$SPIP_ROOT"
 "$SPIP_BIN" core:preparer
+SPIP_BIN_SPIP() { (cd "$SPIP_ROOT" && "$ROOT_DIR/vendor/bin/spip" "$@"); }
 
 if [ ! -f "$SPIP_ROOT/config/connect.php" ]; then
-    "$SPIP_BIN" core:installer \
+    SPIP_BIN_SPIP core:installer \
         --db-server=sqlite3 \
         --db-host='' --db-login='' --db-pass='' \
         --db-database='spip_test' \
@@ -44,11 +45,19 @@ if [ ! -f "$SPIP_ROOT/config/connect.php" ]; then
         --adresse-site='http://localhost'
 fi
 
-"$SPIP_BIN" plugins:svp:depoter "$DEPOT_PRINCIPAL" || true
+SPIP_BIN_SPIP plugins:svp:depoter "$DEPOT_PRINCIPAL" || true
+
+# Rendre le plugin disponible via un symlink dans le répertoire plugins/ de SPIP
+PLUGIN_LINK="$SPIP_ROOT/plugins/$PLUGIN_PREFIX"
+if [ ! -L "$PLUGIN_LINK" ]; then
+    mkdir -p "$SPIP_ROOT/plugins"
+    ln -sf "$ROOT_DIR" "$PLUGIN_LINK"
+    echo "Symlink créé : $PLUGIN_LINK -> $ROOT_DIR"
+fi
 
 for plugin_dep in $PLUGIN_DEPS; do
     activate_or_install_plugin "$plugin_dep" || { echo "Failed: $plugin_dep" >&2; exit 1; }
 done
 
-"$SPIP_BIN" plugins:activer "$PLUGIN_PREFIX" -y
+SPIP_BIN_SPIP plugins:activer "$PLUGIN_PREFIX" -y
 echo "Integration environment ready."
