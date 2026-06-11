@@ -22,6 +22,7 @@ function backup_img_upgrade(string $nom_meta_base_version, string $version_cible
         ['ecrire_config', 'backup_img/ftp_dossier',       '/'],
     ];
 
+    include_spip('base/upgrade');
     maj_plugin($nom_meta_base_version, $version_cible, $maj);
 }
 
