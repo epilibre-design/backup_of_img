@@ -16,7 +16,7 @@
 
     <pipeline nom="autoriser" inclure="backup_img_autoriser.php" />
 
-    <genie nom="sauvegarder" periode="86400" />
+    <genie nom="sauvegarder" periode="3600" />
 
     <menu
         nom="backup_img"
