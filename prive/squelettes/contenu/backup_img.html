@@ -1,0 +1,31 @@
+[(#AUTORISER{backupimgcreer}|sinon_interdire_acces)]
+
+<h1 class="grostitre"><:backup_img:titre_page:></h1>
+
+[(#ENV{ok}|oui)
+<div class="reponse_formulaire reponse_formulaire_ok" role="status">
+  <:backup_img:info_sauvegarde_creee|parametre_url{fichier,#ENV{nom}}:>
+</div>
+]
+
+[(#ENV{erreur}|=={creation_zip}|oui)
+<div class="reponse_formulaire reponse_formulaire_erreur" role="alert">
+  <:backup_img:erreur_creation_zip:>
+</div>
+]
+
+<div class="boite_info">
+  <p><a href="[(#URL_ECRIRE{configurer_backup_img})]" class="btn"><:backup_img:titre_configurer:></a></p>
+</div>
+
+<p>
+  <a href="[(#URL_ACTION_AUTEUR{backup_img_creer,,#SELF})]" class="btn submit">
+    <:backup_img:bouton_creer_sauvegarde:>
+  </a>
+</p>
+
+<p class="verdana3">
+  <:backup_img:info_espace_utilise|parametre_url{taille,#TAILLE_TOTALE_BACKUP_IMG}:>
+</p>
+
+<INCLURE{fond=inclure/liste_backups,env} />

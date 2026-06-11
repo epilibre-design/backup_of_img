@@ -1,0 +1,36 @@
+<B_backups>
+<table class="spip">
+  <thead>
+    <tr>
+      <th><:backup_img:info_nom_fichier:></th>
+      <th><:backup_img:info_taille:></th>
+      <th><:backup_img:info_date_sauvegarde:></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+</B_backups>
+<BOUCLE_backups(POUR){tableau #LISTE_BACKUPS_IMG}>
+  <tr>
+    <td>[(#VALEUR|table_valeur{nom})]</td>
+    <td>[(#VALEUR|table_valeur{taille}|backup_img_formater_taille)]</td>
+    <td>[(#VALEUR|table_valeur{mtime}|date_relativement)]</td>
+    <td class="action">
+      <a href="[(#URL_ACTION_AUTEUR{backup_img_telecharger,[(#VALEUR|table_valeur{nom})],[(#SELF)]})]"
+         class="btn">
+        <:backup_img:bouton_telecharger:>
+      </a>
+      <a href="[(#URL_ACTION_AUTEUR{backup_img_supprimer,[(#VALEUR|table_valeur{nom})],[(#SELF)]})]"
+         class="btn danger"
+         onclick="return confirm('Supprimer cette sauvegarde ?')">
+        <:backup_img:bouton_supprimer:>
+      </a>
+    </td>
+  </tr>
+</BOUCLE_backups>
+<B_backups>
+  </tbody>
+</table>
+</B_backups>
+<//B_backups>
+<p class="notice"><:backup_img:info_aucune_sauvegarde:></p>
