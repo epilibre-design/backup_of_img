@@ -22,7 +22,7 @@
     <menu
         nom="backup_img"
         titre="backup_img:titre_menu"
-        parent="menu_configuration"
+        parent="menu_administration"
         icone="images/backup_img-16.svg"
         action="backup_img"
     />
