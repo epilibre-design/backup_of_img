@@ -1,0 +1,28 @@
+<paquet
+    prefix="backup_img"
+    categorie="maintenance"
+    version="1.0.0"
+    etat="dev"
+    compatibilite="[4.4.0;4.*]"
+    schema="1.0.0"
+>
+    <nom>Backup IMG</nom>
+    <!-- Sauvegarde automatique du dossier IMG/ en ZIP, stockage local et FTP -->
+
+    <auteur>Plugin backup_img</auteur>
+    <licence lien="http://www.gnu.org/licenses/gpl-3.0.html">GNU/GPL</licence>
+
+    <traduire module="backup_img" reference="fr" />
+
+    <pipeline nom="autoriser" inclure="backup_img_autoriser.php" />
+
+    <genie nom="sauvegarder" periode="86400" />
+
+    <menu
+        nom="backup_img"
+        titre="backup_img:titre_menu"
+        parent="menu_configuration"
+        icone="images/backup_img-16.svg"
+        action="backup_img"
+    />
+</paquet>
