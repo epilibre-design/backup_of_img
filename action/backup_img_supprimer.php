@@ -12,13 +12,13 @@ function action_backup_img_supprimer_dist(): void
     if (!autoriser('backupimgsupprimer')) {
         spip_log('backup_img: suppression refusée (non webmestre)', 'backup_img.' . _LOG_AVERTISSEMENT);
         include_spip('inc/headers');
-        redirige_par_entete(html_entity_decode(generer_url_ecrire('backup_img')));
+        redirige_par_entete(generer_url_ecrire('backup_img'));
         return;
     }
 
     if (!$nom || !preg_match('/\.zip$/i', $nom)) {
         include_spip('inc/headers');
-        redirige_par_entete(html_entity_decode(generer_url_ecrire('backup_img')));
+        redirige_par_entete(generer_url_ecrire('backup_img'));
         return;
     }
 
@@ -44,5 +44,5 @@ function action_backup_img_supprimer_dist(): void
     }
 
     include_spip('inc/headers');
-    redirige_par_entete(html_entity_decode(generer_url_ecrire('backup_img')));
+    redirige_par_entete(generer_url_ecrire('backup_img'));
 }

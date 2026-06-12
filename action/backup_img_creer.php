@@ -12,7 +12,7 @@ function action_backup_img_creer_dist(): void
     if (!autoriser('backupimgcreer')) {
         spip_log('backup_img: création refusée (non webmestre)', 'backup_img.' . _LOG_AVERTISSEMENT);
         include_spip('inc/headers');
-        redirige_par_entete(html_entity_decode(generer_url_ecrire('backup_img', 'erreur=acces_refuse')));
+        redirige_par_entete(generer_url_ecrire('backup_img', 'erreur=acces_refuse'));
         return;
     }
 
@@ -29,7 +29,7 @@ function action_backup_img_creer_dist(): void
             'backup_img.' . _LOG_AVERTISSEMENT
         );
         include_spip('inc/headers');
-        redirige_par_entete(html_entity_decode(generer_url_ecrire('backup_img',
+        redirige_par_entete(str_replace('&amp;', '&', generer_url_ecrire('backup_img',
             'erreur=espace_insuffisant&taille_img=' . $taille_img_mo . '&max_espace=' . $max_mo
         )));
         return;
@@ -40,7 +40,7 @@ function action_backup_img_creer_dist(): void
     if (!$chemin) {
         spip_log('backup_img: échec de création du ZIP', 'backup_img.' . _LOG_ERREUR);
         include_spip('inc/headers');
-        redirige_par_entete(html_entity_decode(generer_url_ecrire('backup_img', 'erreur=creation_zip')));
+        redirige_par_entete(generer_url_ecrire('backup_img', 'erreur=creation_zip'));
         return;
     }
 
@@ -59,5 +59,5 @@ function action_backup_img_creer_dist(): void
     backup_img_rotation();
 
     include_spip('inc/headers');
-    redirige_par_entete(html_entity_decode(generer_url_ecrire('backup_img', 'ok=1&nom=' . rawurlencode($nom))));
+    redirige_par_entete(str_replace('&amp;', '&', generer_url_ecrire('backup_img', 'ok=1&nom=' . rawurlencode($nom))));
 }
