@@ -12,19 +12,19 @@ document.addEventListener('DOMContentLoaded', function () {
     var doneMsg   = progressZone.dataset.done || 'Sauvegarde terminée.';
     var timer     = null;
     var spinnerStopped = false;
+    var boite     = progressZone.closest('.box');
 
     function showProgress() {
-        if (infoZone) { infoZone.style.display = 'none'; }
-        if (btn)      { btn.style.display      = 'none'; }
+        if (btn) { btn.style.display = 'none'; }
         progressZone.style.display = '';
-        if (typeof jQuery !== 'undefined') {
-            jQuery(progressZone).animateLoading();
+        if (boite && typeof jQuery !== 'undefined') {
+            jQuery(boite).animateLoading();
         }
     }
 
     function stopSpinner() {
         if (!spinnerStopped && typeof jQuery !== 'undefined') {
-            jQuery(progressZone).endLoading(true);
+            if (boite) { jQuery(boite).endLoading(true); }
             spinnerStopped = true;
         }
     }
@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         msgOk.className = 'success';
                         msgOk.textContent = doneMsg;
                         infoZone.insertBefore(msgOk, infoZone.firstChild);
-                        infoZone.style.display = '';
                         setTimeout(function () {
                             if (msgOk.parentNode) { msgOk.parentNode.removeChild(msgOk); }
                         }, 5000);
@@ -73,8 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     stopSpinner();
                     statusEl.className = 'error';
                     statusEl.textContent = data.error || 'Erreur inconnue.';
-                    if (btn)      { btn.style.display      = ''; }
-                    if (infoZone) { infoZone.style.display = ''; }
+                    if (btn) { btn.style.display = ''; }
                 }
             })
             .catch(function () { /* réseau — réessai au prochain tick */ });
@@ -127,18 +125,18 @@ document.addEventListener('DOMContentLoaded', function () {
                         window.location.href = r.url;
                     } else {
                         stopSpinner();
+                        progressZone.style.display = 'none';
                         statusEl.className   = 'error';
                         statusEl.textContent = 'Erreur lors du démarrage de la sauvegarde.';
-                        if (btn)      { btn.style.display      = ''; }
-                        if (infoZone) { infoZone.style.display = ''; }
+                        if (btn) { btn.style.display = ''; }
                     }
                 })
                 .catch(function () {
                     stopSpinner();
+                    progressZone.style.display = 'none';
                     statusEl.className   = 'error';
                     statusEl.textContent = 'Erreur réseau.';
-                    if (btn)      { btn.style.display      = ''; }
-                    if (infoZone) { infoZone.style.display = ''; }
+                    if (btn) { btn.style.display = ''; }
                 });
         });
     }
