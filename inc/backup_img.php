@@ -6,12 +6,12 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 /**
  * Génère le nom de fichier ZIP selon la configuration (préfixe + date).
  */
-function backup_img_nom_fichier(): string
+function backup_img_nom_fichier(string $format = 'zip'): string
 {
     $prefixe     = lire_config('backup_img/prefixe',     'backup_img');
     $format_date = lire_config('backup_img/format_date', 'Ymd_His');
-
-    return $prefixe . '_' . date($format_date) . '.zip';
+    $ext = ($format === 'tar') ? 'tar' : 'zip';
+    return $prefixe . '_' . date($format_date) . '.' . $ext;
 }
 
 /**
@@ -103,6 +103,143 @@ function backup_img_compter_fichiers(string $dossier): int
         }
     }
     return $count;
+}
+
+/**
+ * Retourne true si le binaire tar et proc_open sont disponibles sur ce serveur.
+ */
+function backup_img_tar_disponible(): bool
+{
+    if (!function_exists('proc_open')) {
+        return false;
+    }
+    foreach (['/bin/tar', '/usr/bin/tar', '/usr/local/bin/tar'] as $path) {
+        if (is_executable($path)) {
+            return true;
+        }
+    }
+    if (function_exists('exec')) {
+        exec('which tar 2>/dev/null', $output, $code);
+        return $code === 0 && !empty($output);
+    }
+    return false;
+}
+
+/**
+ * Crée une archive TAR de IMG/ via proc_open(tar).
+ * Mémoire constante quelle que soit la taille source.
+ * Progression calculée d'après la taille du fichier en cours de création.
+ * Retourne le chemin complet du TAR créé, ou false en cas d'échec.
+ */
+function backup_img_creer_tar(string $hash = ''): string|false
+{
+    $dossier = backup_img_dossier_local();
+    if ($dossier === false) {
+        if ($hash !== '') {
+            backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'Dossier local inaccessible', 'ended_at' => time()]);
+        }
+        return false;
+    }
+
+    $img_dir = rtrim(_DIR_IMG, '/');
+    if (!is_dir($img_dir)) {
+        spip_log('backup_img: dossier IMG/ introuvable : ' . $img_dir, 'backup_img.' . _LOG_ERREUR);
+        if ($hash !== '') {
+            backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'Dossier IMG/ introuvable', 'ended_at' => time()]);
+        }
+        return false;
+    }
+
+    $nom    = backup_img_nom_fichier('tar');
+    $chemin = $dossier . $nom;
+
+    $taille_source = 0;
+    if ($hash !== '') {
+        $taille_source = backup_img_taille_dossier($img_dir);
+        backup_img_ecrire_etat($hash, [
+            'state'      => 'running',
+            'total'      => $taille_source,
+            'processed'  => 0,
+            'percent'    => 0,
+            'started_at' => time(),
+        ]);
+    }
+
+    $parent  = dirname($img_dir);
+    $dirname = basename($img_dir);
+    $cmd     = 'tar cf ' . escapeshellarg($chemin)
+             . ' -C ' . escapeshellarg($parent)
+             . ' ' . escapeshellarg($dirname);
+
+    $descriptorspec = [
+        0 => ['pipe', 'r'],
+        1 => ['pipe', 'w'],
+        2 => ['pipe', 'w'],
+    ];
+
+    $process = proc_open($cmd, $descriptorspec, $pipes);
+    if (!is_resource($process)) {
+        spip_log('backup_img: proc_open(tar) échoué', 'backup_img.' . _LOG_ERREUR);
+        if ($hash !== '') {
+            backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'proc_open(tar) indisponible', 'ended_at' => time()]);
+        }
+        return false;
+    }
+
+    fclose($pipes[0]);
+    fclose($pipes[1]);
+
+    // Suivi de la progression via la taille de l'archive en cours de création
+    if ($hash !== '' && $taille_source > 0) {
+        while (proc_get_status($process)['running']) {
+            clearstatcache(true, $chemin);
+            $archive_size = is_file($chemin) ? (int) filesize($chemin) : 0;
+            backup_img_ecrire_etat($hash, [
+                'processed' => $archive_size,
+                'percent'   => min(99, (int) ($archive_size / $taille_source * 100)),
+            ]);
+            sleep(1);
+        }
+    }
+
+    $stderr    = stream_get_contents($pipes[2]);
+    fclose($pipes[2]);
+    $exit_code = proc_close($process);
+
+    if ($exit_code !== 0) {
+        $err = trim($stderr ?: 'Code de sortie ' . $exit_code);
+        spip_log('backup_img: tar échoué — ' . $err, 'backup_img.' . _LOG_ERREUR);
+        if ($hash !== '') {
+            backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'tar : ' . $err, 'ended_at' => time()]);
+        }
+        return false;
+    }
+
+    if ($hash !== '') {
+        backup_img_ecrire_etat($hash, [
+            'state'     => 'done',
+            'nom'       => basename($chemin),
+            'percent'   => 100,
+            'ended_at'  => time(),
+        ]);
+    }
+
+    spip_log('backup_img: TAR créé ' . $chemin, 'backup_img.' . _LOG_INFO_IMPORTANTE);
+
+    return $chemin;
+}
+
+/**
+ * Crée une archive selon le format configuré (zip ou tar).
+ * Fallback automatique sur zip si tar est demandé mais indisponible.
+ */
+function backup_img_creer_archive(string $hash = ''): string|false
+{
+    $format = lire_config('backup_img/format', 'zip');
+    if ($format === 'tar' && backup_img_tar_disponible()) {
+        return backup_img_creer_tar($hash);
+    }
+    return backup_img_creer_zip($hash);
 }
 
 /**
@@ -217,10 +354,10 @@ function backup_img_liste_locale(): array
     }
 
     $prefixe = lire_config('backup_img/prefixe', 'backup_img');
-    $fichiers = glob($dossier . $prefixe . '_*.zip');
-    if ($fichiers === false) {
-        return [];
-    }
+    $fichiers = array_merge(
+        glob($dossier . $prefixe . '_*.zip') ?: [],
+        glob($dossier . $prefixe . '_*.tar') ?: []
+    );
 
     $liste = [];
     foreach ($fichiers as $chemin) {
@@ -360,7 +497,7 @@ function backup_img_executer_job(string $hash): void
         return;
     }
 
-    $chemin = backup_img_creer_zip($hash);
+    $chemin = backup_img_creer_archive($hash);
 
     if (!$chemin) {
         backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'Échec ZIP', 'ended_at' => time()]);

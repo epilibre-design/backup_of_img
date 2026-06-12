@@ -30,6 +30,19 @@
         <input type="text" name="dossier_local" id="dossier_local" value="[(#ENV{dossier_local}|sinon{tmp/backup_img/})]" class="text" />
         <p class="explication"><:backup_img:explication_dossier_local:></p>
       </div>
+
+      <div class="editer editer_format">
+        <label><:backup_img:champ_format:></label>
+        <div class="choix">
+          <input type="radio" name="format" id="format_zip" value="zip"[(#ENV{format}|sinon{zip}|=={zip}|oui) checked="checked"] />
+          <label for="format_zip"><:backup_img:info_format_zip:></label>
+        </div>
+        <div class="choix">
+          <input type="radio" name="format" id="format_tar" value="tar"[(#ENV{format}|=={tar}|oui) checked="checked"] />
+          <label for="format_tar"><:backup_img:info_format_tar:></label>
+        </div>
+        <p class="explication"><:backup_img:explication_format:></p>
+      </div>
     </div>
   </fieldset>
 

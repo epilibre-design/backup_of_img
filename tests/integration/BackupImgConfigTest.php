@@ -33,7 +33,7 @@ final class BackupImgConfigTest extends TestCase
     {
         $this->assertSame('0',  lire_config('backup_img/ftp_actif'));
         $this->assertSame('21', lire_config('backup_img/ftp_port'));
-        $this->assertSame('/', lire_config('backup_img/ftp_dossier'));
+        $this->assertSame('backup_img/', lire_config('backup_img/ftp_dossier'));
     }
 
     public function testEcrireEtLireConfig(): void

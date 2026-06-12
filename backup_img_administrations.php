@@ -20,10 +20,15 @@ function backup_img_upgrade(string $nom_meta_base_version, string $version_cible
         ['ecrire_config', 'backup_img/ftp_login',         ''],
         ['ecrire_config', 'backup_img/ftp_pass',          ''],
         ['ecrire_config', 'backup_img/ftp_dossier',       'backup_img/'],
+        ['ecrire_config', 'backup_img/format', 'zip'],
     ];
 
     $maj['1.1.0'] = [
         ['ecrire_config', 'backup_img/ftp_dossier', 'backup_img/'],
+    ];
+
+    $maj['1.2.0'] = [
+        ['ecrire_config', 'backup_img/format', 'zip'],
     ];
 
     include_spip('base/upgrade');
@@ -44,5 +49,6 @@ function backup_img_vider_tables(string $nom_meta_base_version): void
     effacer_config('backup_img/ftp_login');
     effacer_config('backup_img/ftp_pass');
     effacer_config('backup_img/ftp_dossier');
+    effacer_config('backup_img/format');
     effacer_meta($nom_meta_base_version);
 }

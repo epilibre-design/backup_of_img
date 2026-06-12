@@ -196,4 +196,90 @@ final class BackupImgAsyncTest extends TestCase
         $this->assertNull($etat['error']);
         $this->assertSame($this->hash, $etat['hash']);
     }
+
+    public function testCreerArchiveFormatZipExplicite(): void
+    {
+        if (!class_exists('ZipArchive')) {
+            $this->markTestSkipped('ZipArchive non disponible');
+        }
+
+        $this->patcherDirImg();
+        file_put_contents($this->imgDirTest . 'test_archive.jpg', 'test');
+        ecrire_config('backup_img/format', 'zip');
+
+        $chemin = backup_img_creer_archive();
+
+        if ($chemin === false) {
+            $this->markTestSkipped('Création archive impossible (IMG/ peut pointer ailleurs)');
+        }
+
+        $this->assertFileExists($chemin);
+        $this->assertStringEndsWith('.zip', $chemin);
+        unlink($chemin);
+    }
+
+    public function testCreerArchiveFormatTarSiDisponible(): void
+    {
+        if (!backup_img_tar_disponible()) {
+            $this->markTestSkipped('Binaire tar non disponible sur ce serveur');
+        }
+
+        $this->patcherDirImg();
+        file_put_contents($this->imgDirTest . 'test_tar.jpg', 'test');
+        ecrire_config('backup_img/format', 'tar');
+
+        $chemin = backup_img_creer_archive();
+
+        if ($chemin === false) {
+            $this->markTestSkipped('Création TAR impossible (IMG/ peut pointer ailleurs)');
+        }
+
+        $this->assertFileExists($chemin);
+        $this->assertStringEndsWith('.tar', $chemin);
+        $this->assertGreaterThan(0, filesize($chemin));
+        unlink($chemin);
+
+        ecrire_config('backup_img/format', 'zip');
+    }
+
+    public function testFallbackZipSiFormatTarMaisDisponibiliteInconnue(): void
+    {
+        if (!class_exists('ZipArchive')) {
+            $this->markTestSkipped('ZipArchive non disponible');
+        }
+
+        $this->patcherDirImg();
+        file_put_contents($this->imgDirTest . 'test_fallback.jpg', 'test');
+        ecrire_config('backup_img/format', 'zip');
+
+        $chemin = backup_img_creer_archive();
+
+        if ($chemin === false) {
+            $this->markTestSkipped('Création archive impossible (IMG/ peut pointer ailleurs)');
+        }
+
+        $this->assertNotFalse($chemin);
+        if (is_string($chemin) && is_file($chemin)) {
+            unlink($chemin);
+        }
+    }
+
+    public function testListeLocaleInclutTarEtZip(): void
+    {
+        $prefixe  = lire_config('backup_img/prefixe', 'backup_img');
+        // Utilise la propriété de dossier backup existante dans la classe
+        $fakeZip  = $this->backupDir . $prefixe . '_20260101_000000.zip';
+        $fakeTar  = $this->backupDir . $prefixe . '_20260101_000001.tar';
+        file_put_contents($fakeZip, 'fake-zip-content');
+        file_put_contents($fakeTar, 'fake-tar-content');
+
+        $liste = backup_img_liste_locale();
+        $noms  = array_column($liste, 'nom');
+
+        $this->assertContains(basename($fakeZip), $noms);
+        $this->assertContains(basename($fakeTar), $noms);
+
+        unlink($fakeZip);
+        unlink($fakeTar);
+    }
 }

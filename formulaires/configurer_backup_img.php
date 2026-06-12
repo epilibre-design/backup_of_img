@@ -18,6 +18,7 @@ function formulaires_configurer_backup_img_charger_dist(): array
         'ftp_login'       => lire_config('backup_img/ftp_login',       ''),
         'ftp_pass'        => lire_config('backup_img/ftp_pass',        ''),
         'ftp_dossier'     => lire_config('backup_img/ftp_dossier',     'backup_img/'),
+        'format'          => lire_config('backup_img/format',         'zip'),
     ];
 }
 
