@@ -37,6 +37,75 @@ function backup_img_dossier_local(): string|false
 }
 
 /**
+ * Retourne le chemin du fichier JSON d'état pour un hash donné.
+ */
+function backup_img_chemin_etat(string $hash): string
+{
+    return _DIR_TMP . 'backup_img/' . $hash . '.json';
+}
+
+/**
+ * Lit le fichier d'état JSON. Retourne null si absent ou JSON invalide.
+ */
+function backup_img_lire_etat(string $hash): array|null
+{
+    $chemin = backup_img_chemin_etat($hash);
+    if (!is_file($chemin)) {
+        return null;
+    }
+    $contenu = file_get_contents($chemin);
+    if ($contenu === false) {
+        return null;
+    }
+    $data = json_decode($contenu, true);
+    if (!is_array($data)) {
+        return null;
+    }
+    return $data;
+}
+
+/**
+ * Merge $data dans l'état courant (ou crée), écrit le fichier.
+ * Garantit que 'hash' est toujours présent.
+ */
+function backup_img_ecrire_etat(string $hash, array $data): void
+{
+    $chemin  = backup_img_chemin_etat($hash);
+    $dossier = dirname($chemin);
+
+    if (!is_dir($dossier)) {
+        mkdir($dossier, 0755, true);
+    }
+
+    $etat         = backup_img_lire_etat($hash) ?? [];
+    $etat         = array_merge($etat, $data);
+    $etat['hash'] = $hash;
+
+    file_put_contents($chemin, json_encode($etat, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+}
+
+/**
+ * Compte récursivement les fichiers (pas les dossiers) dans $dossier.
+ */
+function backup_img_compter_fichiers(string $dossier): int
+{
+    if (!is_dir($dossier)) {
+        return 0;
+    }
+
+    $count = 0;
+    $iter  = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($dossier, FilesystemIterator::SKIP_DOTS)
+    );
+    foreach ($iter as $item) {
+        if ($item->isFile()) {
+            $count++;
+        }
+    }
+    return $count;
+}
+
+/**
  * Crée le ZIP de IMG/ dans le dossier local.
  * Si $hash est fourni, met à jour l'état asynchrone pendant le traitement.
  * Retourne le chemin complet du ZIP créé, ou false en cas d'échec.
