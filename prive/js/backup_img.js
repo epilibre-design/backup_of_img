@@ -5,9 +5,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var hash = container.dataset.hash;
     if (!hash) return;
 
-    var apiBase  = container.dataset.api;
-    var bar      = document.getElementById('backup-img-bar');
-    var statusEl = document.getElementById('backup-img-status');
+    var apiBase   = container.dataset.api;
+    var doneMsg   = container.dataset.done || 'Sauvegarde terminée.';
+    var bar       = document.getElementById('backup-img-bar');
+    var statusEl  = document.getElementById('backup-img-status');
     var percentEl = document.getElementById('backup-img-percent');
 
     container.style.display = '';
@@ -20,14 +21,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 bar.value = pct;
                 percentEl.textContent = pct + ' %';
 
-                if (data.state === 'running') {
+                if (data.state === 'pending' || data.state === 'running') {
                     statusEl.className = 'notice';
                 } else if (data.state === 'done') {
                     clearInterval(timer);
                     bar.value = 100;
                     percentEl.textContent = '100 %';
                     statusEl.className = 'success';
-                    statusEl.textContent = statusEl.dataset.done || 'Sauvegarde terminée.';
+                    statusEl.textContent = doneMsg;
                     // Recharge la page après 1,5 s pour afficher la nouvelle sauvegarde
                     setTimeout(function () {
                         window.location.href = apiBase.replace('backup_img_api', 'backup_img');
