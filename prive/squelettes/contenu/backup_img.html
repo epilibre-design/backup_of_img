@@ -3,21 +3,15 @@
 <h1 class="grostitre"><:backup_img:titre_page:></h1>
 
 [(#ENV{ok}|oui)
-<div class="reponse_formulaire reponse_formulaire_ok" role="status">
-  <:backup_img:info_sauvegarde_creee{fichier=#ENV{nom}}:>
-</div>
+<p class="success"><:backup_img:info_sauvegarde_creee{fichier=#ENV{nom}}:></p>
 ]
 
 [(#ENV{erreur}|=={creation_zip}|oui)
-<div class="reponse_formulaire reponse_formulaire_erreur" role="alert">
-  <:backup_img:erreur_creation_zip:>
-</div>
+<p class="error"><:backup_img:erreur_creation_zip:></p>
 ]
 
 [(#ENV{erreur}|=={espace_insuffisant}|oui)
-<div class="reponse_formulaire reponse_formulaire_erreur" role="alert">
-  <:backup_img:erreur_espace_insuffisant{taille_img=#ENV{taille_img},max_espace=#ENV{max_espace}}:>
-</div>
+<p class="error"><:backup_img:erreur_espace_insuffisant{taille_img=#ENV{taille_img},max_espace=#ENV{max_espace}}:></p>
 ]
 
 <div class="boite_info">
