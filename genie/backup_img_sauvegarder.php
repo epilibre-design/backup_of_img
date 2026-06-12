@@ -33,7 +33,7 @@ function genie_backup_img_sauvegarder_dist(int $lastrun): int
 
     $controle = backup_img_peut_creer();
     if (!$controle['peut']) {
-        spip_log('backup_img genie: création ignorée — limite ' . $controle['raison'], 'backup_img.' . _LOG_INFO_IMPORTANTE);
+        spip_log('backup_img genie: création bloquée — limite ' . $controle['raison'] . ' atteinte, supprimez des sauvegardes existantes', 'backup_img.' . _LOG_ERREUR);
         return 0;
     }
 
