@@ -35,29 +35,19 @@ function action_backup_img_creer_dist(): void
         return;
     }
 
-    $chemin = backup_img_creer_zip();
-
-    if (!$chemin) {
-        spip_log('backup_img: échec de création du ZIP', 'backup_img.' . _LOG_ERREUR);
-        include_spip('inc/headers');
-        redirige_par_entete(generer_url_ecrire('backup_img', 'erreur=creation_zip'));
-        return;
-    }
-
-    $nom = basename($chemin);
-
-    $ftp_actif = (int) lire_config('backup_img/ftp_actif', '0');
-    if ($ftp_actif) {
-        include_spip('inc/backup_img_ftp');
-        $conn = backup_img_ftp_connecter();
-        if ($conn) {
-            backup_img_ftp_uploader($chemin, $conn);
-            ftp_close($conn);
-        }
-    }
-
-    backup_img_rotation();
+    $hash = substr(hash('sha256', uniqid('backup_img', true)), 0, 16);
+    backup_img_ecrire_etat($hash, [
+        'hash'       => $hash,
+        'state'      => 'pending',
+        'percent'    => 0,
+        'processed'  => 0,
+        'total'      => 0,
+        'nom'        => null,
+        'started_at' => null,
+        'ended_at'   => null,
+        'error'      => null,
+    ]);
 
     include_spip('inc/headers');
-    redirige_par_entete(str_replace('&amp;', '&', generer_url_ecrire('backup_img', 'ok=1&nom=' . rawurlencode($nom))));
+    redirige_par_entete(str_replace('&amp;', '&', generer_url_ecrire('backup_img', 'job=' . $hash)));
 }

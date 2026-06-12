@@ -38,17 +38,24 @@ function backup_img_dossier_local(): string|false
 
 /**
  * Crée le ZIP de IMG/ dans le dossier local.
+ * Si $hash est fourni, met à jour l'état asynchrone pendant le traitement.
  * Retourne le chemin complet du ZIP créé, ou false en cas d'échec.
  */
-function backup_img_creer_zip(): string|false
+function backup_img_creer_zip(string $hash = ''): string|false
 {
     if (!class_exists('ZipArchive')) {
         spip_log('backup_img: extension ZipArchive manquante', 'backup_img.' . _LOG_ERREUR);
+        if ($hash !== '') {
+            backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'Extension ZipArchive manquante', 'ended_at' => time()]);
+        }
         return false;
     }
 
     $dossier = backup_img_dossier_local();
     if ($dossier === false) {
+        if ($hash !== '') {
+            backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'Dossier local inaccessible', 'ended_at' => time()]);
+        }
         return false;
     }
 
@@ -58,18 +65,34 @@ function backup_img_creer_zip(): string|false
 
     if (!is_dir($img_dir)) {
         spip_log('backup_img: dossier IMG/ introuvable : ' . $img_dir, 'backup_img.' . _LOG_ERREUR);
+        if ($hash !== '') {
+            backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'Dossier IMG/ introuvable', 'ended_at' => time()]);
+        }
         return false;
+    }
+
+    if ($hash !== '') {
+        $total = backup_img_compter_fichiers($img_dir);
+        backup_img_ecrire_etat($hash, ['state' => 'running', 'total' => $total, 'processed' => 0, 'percent' => 0, 'started_at' => time()]);
     }
 
     $zip = new ZipArchive();
     if ($zip->open($chemin, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
         spip_log('backup_img: impossible d\'ouvrir le ZIP ' . $chemin, 'backup_img.' . _LOG_ERREUR);
+        if ($hash !== '') {
+            backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'Impossible d\'ouvrir le ZIP', 'ended_at' => time()]);
+        }
         return false;
     }
 
-    backup_img_zip_ajouter_dossier($zip, $img_dir, 'IMG');
+    $compteur = 0;
+    backup_img_zip_ajouter_dossier($zip, $img_dir, 'IMG', $hash, $total ?? 0, $compteur);
 
     $zip->close();
+
+    if ($hash !== '') {
+        backup_img_ecrire_etat($hash, ['state' => 'done', 'nom' => basename($chemin), 'percent' => 100, 'processed' => $compteur, 'ended_at' => time()]);
+    }
 
     spip_log('backup_img: ZIP créé ' . $chemin, 'backup_img.' . _LOG_INFO_IMPORTANTE);
 
@@ -78,8 +101,9 @@ function backup_img_creer_zip(): string|false
 
 /**
  * Ajoute récursivement un dossier dans le ZIP.
+ * Si $hash est fourni, met à jour la progression toutes les 50 entrées.
  */
-function backup_img_zip_ajouter_dossier(ZipArchive $zip, string $dossier, string $dossier_zip): void
+function backup_img_zip_ajouter_dossier(ZipArchive $zip, string $dossier, string $dossier_zip, string $hash = '', int $total = 0, int &$compteur = 0): void
 {
     $items = scandir($dossier);
     if ($items === false) {
@@ -96,9 +120,16 @@ function backup_img_zip_ajouter_dossier(ZipArchive $zip, string $dossier, string
 
         if (is_dir($chemin_complet)) {
             $zip->addEmptyDir($chemin_zip);
-            backup_img_zip_ajouter_dossier($zip, $chemin_complet, $chemin_zip);
+            backup_img_zip_ajouter_dossier($zip, $chemin_complet, $chemin_zip, $hash, $total, $compteur);
         } elseif (is_file($chemin_complet)) {
             $zip->addFile($chemin_complet, $chemin_zip);
+            $compteur++;
+            if ($hash !== '' && $total > 0 && $compteur % 50 === 0) {
+                backup_img_ecrire_etat($hash, [
+                    'processed' => $compteur,
+                    'percent'   => min(99, (int)($compteur / $total * 100)),
+                ]);
+            }
         }
     }
 }
@@ -225,5 +256,127 @@ function backup_img_supprimer_fichier(string $chemin_local, string $nom, mixed $
     if ($conn_ftp !== null) {
         include_spip('inc/backup_img_ftp');
         backup_img_ftp_supprimer($nom, $conn_ftp);
+    }
+}
+
+/**
+ * Compte récursivement les fichiers dans $dossier (pas les dossiers).
+ * Retourne 0 si $dossier n'existe pas.
+ */
+function backup_img_compter_fichiers(string $dossier): int
+{
+    if (!is_dir($dossier)) {
+        return 0;
+    }
+
+    $total = 0;
+    $iter = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($dossier, FilesystemIterator::SKIP_DOTS)
+    );
+    foreach ($iter as $item) {
+        if ($item->isFile()) {
+            $total++;
+        }
+    }
+    return $total;
+}
+
+/**
+ * Retourne le chemin du fichier d'état pour un job donné.
+ */
+function backup_img_chemin_etat(string $hash): string
+{
+    return rtrim(_DIR_TMP, '/') . '/backup_img/' . $hash . '.json';
+}
+
+/**
+ * Lit le fichier d'état d'un job. Retourne null si absent ou JSON invalide.
+ */
+function backup_img_lire_etat(string $hash): array|null
+{
+    $chemin = backup_img_chemin_etat($hash);
+    if (!is_file($chemin)) {
+        return null;
+    }
+    $contenu = file_get_contents($chemin);
+    if ($contenu === false) {
+        return null;
+    }
+    $data = json_decode($contenu, true);
+    if (!is_array($data)) {
+        return null;
+    }
+    return $data;
+}
+
+/**
+ * Écrit (en fusionnant) l'état d'un job dans son fichier JSON.
+ * Garantit que 'hash' est toujours présent. Crée le dossier si nécessaire.
+ */
+function backup_img_ecrire_etat(string $hash, array $data): void
+{
+    $chemin = backup_img_chemin_etat($hash);
+    $dossier = dirname($chemin);
+
+    if (!is_dir($dossier)) {
+        mkdir($dossier, 0755, true);
+    }
+
+    $actuel = backup_img_lire_etat($hash) ?? [];
+    $merged = array_merge($actuel, $data);
+    $merged['hash'] = $hash;
+
+    file_put_contents($chemin, json_encode($merged, JSON_PRETTY_PRINT));
+}
+
+/**
+ * Exécute le job de backup identifié par $hash.
+ * Ne fait rien si l'état n'est pas 'pending'.
+ */
+function backup_img_executer_job(string $hash): void
+{
+    $etat = backup_img_lire_etat($hash);
+    if (!$etat || $etat['state'] !== 'pending') {
+        return;
+    }
+
+    set_time_limit(0);
+    ignore_user_abort(true);
+
+    $max_mo     = (int) lire_config('backup_img/max_espace_mo', '500');
+    $max_octets = $max_mo * 1024 * 1024;
+    $taille_img = backup_img_taille_dossier(rtrim(_DIR_IMG, '/'));
+
+    if ($taille_img > $max_octets) {
+        $taille_img_mo = (int) round($taille_img / (1024 * 1024));
+        spip_log(
+            "backup_img: espace insuffisant — IMG={$taille_img_mo} Mo, limite={$max_mo} Mo",
+            'backup_img.' . _LOG_AVERTISSEMENT
+        );
+        backup_img_ecrire_etat($hash, [
+            'state'    => 'error',
+            'error'    => "Espace insuffisant : IMG={$taille_img_mo} Mo, limite={$max_mo} Mo",
+            'ended_at' => time(),
+        ]);
+        return;
+    }
+
+    $chemin = backup_img_creer_zip($hash);
+
+    if (!$chemin) {
+        backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'Échec ZIP', 'ended_at' => time()]);
+        return;
+    }
+
+    backup_img_rotation();
+
+    $ftp_actif = (int) lire_config('backup_img/ftp_actif', '0');
+    if ($ftp_actif) {
+        include_spip('inc/backup_img_ftp');
+        $conn = backup_img_ftp_connecter();
+        if ($conn) {
+            backup_img_ftp_uploader($chemin, $conn);
+            ftp_close($conn);
+        }
     }
 }
