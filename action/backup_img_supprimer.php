@@ -16,13 +16,13 @@ function action_backup_img_supprimer_dist(): void
         return;
     }
 
-    if (!$nom || !preg_match('/\.zip$/i', $nom)) {
+    include_spip('inc/backup_img');
+
+    if (!backup_img_nom_valide($nom)) {
         include_spip('inc/headers');
         redirige_par_entete(generer_url_ecrire('backup_img'));
         return;
     }
-
-    include_spip('inc/backup_img');
     $dossier = backup_img_dossier_local();
 
     if ($dossier) {

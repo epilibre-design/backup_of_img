@@ -14,12 +14,12 @@ function action_backup_img_telecharger_dist(): void
         exit;
     }
 
-    if (!$nom || !preg_match('/\.(zip|tar)$/i', $nom)) {
+    include_spip('inc/backup_img');
+
+    if (!backup_img_nom_valide($nom)) {
         http_response_code(400);
         exit;
     }
-
-    include_spip('inc/backup_img');
     $dossier = backup_img_dossier_local();
 
     if (!$dossier) {

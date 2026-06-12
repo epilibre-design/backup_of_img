@@ -4,6 +4,18 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 }
 
 /**
+ * Valide qu'un nom de fichier d'archive est sûr et accepté (zip ou tar).
+ * Refuse tout nom contenant un séparateur de chemin.
+ */
+function backup_img_nom_valide(string $nom): bool
+{
+    if ($nom === '' || str_contains($nom, '/') || str_contains($nom, '\\')) {
+        return false;
+    }
+    return (bool) preg_match('/\.(zip|tar)$/i', $nom);
+}
+
+/**
  * Génère le nom de fichier ZIP selon la configuration (préfixe + date).
  */
 function backup_img_nom_fichier(string $format = 'zip'): string
