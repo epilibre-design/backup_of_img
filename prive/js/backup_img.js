@@ -29,10 +29,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     percentEl.textContent = '100 %';
                     statusEl.className = 'success';
                     statusEl.textContent = doneMsg;
-                    // Recharge la page après 1,5 s pour afficher la nouvelle sauvegarde
-                    setTimeout(function () {
-                        window.location.href = apiBase.replace('backup_img_api', 'backup_img');
-                    }, 1500);
+                    // Recharge uniquement la liste via ajaxReload (bloc ajax=backup_img_liste)
+                    if (typeof ajaxReload === 'function') {
+                        ajaxReload('backup_img_liste');
+                    } else {
+                        window.location.reload();
+                    }
                 } else if (data.state === 'error') {
                     clearInterval(timer);
                     statusEl.className = 'error';
