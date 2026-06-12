@@ -29,11 +29,16 @@
 
 #BOITE_PIED
 
+  [(#BACKUP_IMG_PEUT_CREER|=={oui}|oui)
   <a href="[(#URL_ACTION_AUTEUR{backup_img_creer,1,#URL_ECRIRE{backup_img}})]"
      id="backup-img-btn"
      class="btn submit">
     <:backup_img:bouton_creer_sauvegarde:>
   </a>
+  ]
+  [(#BACKUP_IMG_PEUT_CREER|=={non}|oui)
+  <p class="notice"><:backup_img:avertissement_limite_atteinte:></p>
+  ]
 
 #BOITE_FERMER
 </div>

@@ -429,6 +429,27 @@ function backup_img_taille_totale(): int
 }
 
 /**
+ * Indique si une nouvelle sauvegarde peut être créée.
+ * Retourne ['peut' => bool, 'raison' => 'espace'|'count'|'']
+ * La valeur 0 pour max_espace_mo ou max_sauvegardes signifie "illimité".
+ *
+ * @return array{peut: bool, raison: string}
+ */
+function backup_img_peut_creer(): array
+{
+    $max_count  = (int) lire_config('backup_img/max_sauvegardes', '10');
+    $max_mo     = (int) lire_config('backup_img/max_espace_mo',   '500');
+
+    if ($max_count > 0 && count(backup_img_liste_locale()) >= $max_count) {
+        return ['peut' => false, 'raison' => 'count'];
+    }
+    if ($max_mo > 0 && backup_img_taille_totale() >= $max_mo * 1024 * 1024) {
+        return ['peut' => false, 'raison' => 'espace'];
+    }
+    return ['peut' => true, 'raison' => ''];
+}
+
+/**
  * Applique la rotation : supprime les backups les plus anciens si le nombre
  * ou l'espace dépasse les limites configurées. Supprime aussi sur FTP si actif.
  */
@@ -497,21 +518,13 @@ function backup_img_executer_job(string $hash): void
     set_time_limit(0);
     ignore_user_abort(true);
 
-    $max_mo     = (int) lire_config('backup_img/max_espace_mo', '500');
-    $max_octets = $max_mo * 1024 * 1024;
-    $taille_img = backup_img_taille_dossier(rtrim(_DIR_IMG, '/'));
-
-    if ($taille_img > $max_octets) {
-        $taille_img_mo = (int) round($taille_img / (1024 * 1024));
-        spip_log(
-            "backup_img: espace insuffisant — IMG={$taille_img_mo} Mo, limite={$max_mo} Mo",
-            'backup_img.' . _LOG_AVERTISSEMENT
-        );
-        backup_img_ecrire_etat($hash, [
-            'state'    => 'error',
-            'error'    => "Espace insuffisant : IMG={$taille_img_mo} Mo, limite={$max_mo} Mo",
-            'ended_at' => time(),
-        ]);
+    $controle = backup_img_peut_creer();
+    if (!$controle['peut']) {
+        $msg = $controle['raison'] === 'espace'
+            ? 'Limite d\'espace atteinte, supprimez des sauvegardes existantes.'
+            : 'Nombre maximum de sauvegardes atteint, supprimez des sauvegardes existantes.';
+        spip_log('backup_img: création bloquée — ' . $msg, 'backup_img.' . _LOG_AVERTISSEMENT);
+        backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => $msg, 'ended_at' => time()]);
         return;
     }
 
@@ -521,8 +534,6 @@ function backup_img_executer_job(string $hash): void
         backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'Échec création archive', 'ended_at' => time()]);
         return;
     }
-
-    backup_img_rotation();
 
     $ftp_actif = (int) lire_config('backup_img/ftp_actif', '0');
     if ($ftp_actif) {

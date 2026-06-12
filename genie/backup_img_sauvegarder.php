@@ -25,10 +25,17 @@ function genie_backup_img_sauvegarder_dist(int $lastrun): int
     }
 
     include_spip('inc/backup_img');
-    $chemin = backup_img_creer_zip();
+
+    $controle = backup_img_peut_creer();
+    if (!$controle['peut']) {
+        spip_log('backup_img genie: création ignorée — limite ' . $controle['raison'], 'backup_img.' . _LOG_INFO_IMPORTANTE);
+        return 0;
+    }
+
+    $chemin = backup_img_creer_archive();
 
     if (!$chemin) {
-        spip_log('backup_img genie: échec de création du ZIP', 'backup_img.' . _LOG_ERREUR);
+        spip_log('backup_img genie: échec de création de l\'archive', 'backup_img.' . _LOG_ERREUR);
         return 0;
     }
 
@@ -41,8 +48,6 @@ function genie_backup_img_sauvegarder_dist(int $lastrun): int
             ftp_close($conn);
         }
     }
-
-    backup_img_rotation();
 
     spip_log('backup_img genie: sauvegarde automatique réussie', 'backup_img.' . _LOG_INFO_IMPORTANTE);
 

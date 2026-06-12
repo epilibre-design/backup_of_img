@@ -9,6 +9,8 @@ return [
 
     'confirmer_supprimer'                => 'Supprimer cette sauvegarde ?',
 
+    'avertissement_limite_atteinte'      => 'Limite atteinte. Supprimez des sauvegardes existantes pour pouvoir en créer une nouvelle.',
+
     // C
     'champ_cron_periode'                 => 'Fréquence des sauvegardes automatiques',
     'champ_dossier_local'                => 'Dossier de stockage local',

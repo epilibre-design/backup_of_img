@@ -7,6 +7,7 @@ return [
     'bouton_telecharger'                 => 'Download',
     'bouton_tester_ftp'                  => 'Test FTP connection',
 
+    'avertissement_limite_atteinte'      => 'Limit reached. Delete existing backups to be able to create a new one.',
     'confirmer_supprimer'                => 'Delete this backup?',
 
     // C
