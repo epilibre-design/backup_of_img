@@ -44,6 +44,8 @@ return [
     'info_nb_sauvegardes'                => '@nb@ sauvegarde(s)',
     'info_nom_fichier'                   => 'Fichier',
     'info_sauvegarde_creee'              => 'Sauvegarde créée avec succès : @fichier@',
+    'info_sauvegarde_lancee'             => 'Sauvegarde lancée, traitement en arrière-plan…',
+    'info_sauvegarde_terminee'           => 'Sauvegarde terminée.',
     'info_taille'                        => 'Taille',
 
     // T
