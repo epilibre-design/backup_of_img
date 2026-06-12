@@ -13,7 +13,7 @@
     [(#ENV{erreur}|=={espace_insuffisant}|oui)
     <p class="error"><:backup_img:erreur_espace_insuffisant{taille_img=#ENV{taille_img},max_espace=#ENV{max_espace}}:></p>
     ]
-    <p><:backup_img:info_espace_occupe{taille=#TAILLE_TOTALE_BACKUP_IMG}:></p>
+    <INCLURE{fond=prive/squelettes/inclure/backup_img_taille,ajax=backup_img_taille}>
   </div>
 
   <div id="backup-img-zone-progress"

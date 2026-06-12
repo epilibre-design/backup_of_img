@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (btn) { btn.style.display = ''; }
                     if (typeof ajaxReload === 'function') {
                         ajaxReload('backup_img_liste');
+                        ajaxReload('backup_img_taille');
                     } else {
                         window.location.reload();
                     }
