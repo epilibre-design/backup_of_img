@@ -14,7 +14,7 @@ function action_backup_img_telecharger_dist(): void
         exit;
     }
 
-    if (!$nom || !preg_match('/\.zip$/i', $nom)) {
+    if (!$nom || !preg_match('/\.(zip|tar)$/i', $nom)) {
         http_response_code(400);
         exit;
     }
@@ -34,9 +34,10 @@ function action_backup_img_telecharger_dist(): void
         exit;
     }
 
-    $taille = filesize($chemin);
+    $taille      = filesize($chemin);
+    $content_type = str_ends_with(strtolower($nom), '.tar') ? 'application/x-tar' : 'application/zip';
 
-    header('Content-Type: application/zip');
+    header('Content-Type: ' . $content_type);
     header('Content-Disposition: attachment; filename="' . addslashes($nom) . '"');
     header('Content-Length: ' . $taille);
     header('Cache-Control: no-cache, no-store, must-revalidate');

@@ -206,13 +206,19 @@ function backup_img_creer_tar(string $hash = ''): string|false
     fclose($pipes[2]);
     $exit_code = proc_close($process);
 
-    if ($exit_code !== 0) {
-        $err = trim($stderr ?: 'Code de sortie ' . $exit_code);
+    // GNU tar : code 0 = succès, 1 = avertissements (fichiers modifiés, etc.) mais archive valide, 2+ = erreur fatale
+    $archive_valide = is_file($chemin) && filesize($chemin) > 0;
+    if ($exit_code >= 2 || !$archive_valide) {
+        $err = trim($stderr ?: 'Code de sortie fatal ' . $exit_code);
         spip_log('backup_img: tar échoué — ' . $err, 'backup_img.' . _LOG_ERREUR);
         if ($hash !== '') {
             backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'tar : ' . $err, 'ended_at' => time()]);
         }
         return false;
+    }
+    if ($exit_code === 1) {
+        $warn = trim($stderr ?: '');
+        spip_log('backup_img: tar terminé avec avertissements (code 1)' . ($warn ? ' — ' . $warn : ''), 'backup_img.' . _LOG_INFO_IMPORTANTE);
     }
 
     if ($hash !== '') {
@@ -500,7 +506,7 @@ function backup_img_executer_job(string $hash): void
     $chemin = backup_img_creer_archive($hash);
 
     if (!$chemin) {
-        backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'Échec ZIP', 'ended_at' => time()]);
+        backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'Échec création archive', 'ended_at' => time()]);
         return;
     }
 
