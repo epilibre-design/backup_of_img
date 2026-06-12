@@ -37,18 +37,94 @@ function backup_img_dossier_local(): string|false
 }
 
 /**
+ * Retourne le chemin du fichier JSON d'état pour un hash donné.
+ */
+function backup_img_chemin_etat(string $hash): string
+{
+    return _DIR_TMP . 'backup_img/' . $hash . '.json';
+}
+
+/**
+ * Lit le fichier d'état JSON. Retourne null si absent ou JSON invalide.
+ */
+function backup_img_lire_etat(string $hash): array|null
+{
+    $chemin = backup_img_chemin_etat($hash);
+    if (!is_file($chemin)) {
+        return null;
+    }
+    $contenu = file_get_contents($chemin);
+    if ($contenu === false) {
+        return null;
+    }
+    $data = json_decode($contenu, true);
+    if (!is_array($data)) {
+        return null;
+    }
+    return $data;
+}
+
+/**
+ * Merge $data dans l'état courant (ou crée), écrit le fichier.
+ * Garantit que 'hash' est toujours présent.
+ */
+function backup_img_ecrire_etat(string $hash, array $data): void
+{
+    $chemin  = backup_img_chemin_etat($hash);
+    $dossier = dirname($chemin);
+
+    if (!is_dir($dossier)) {
+        mkdir($dossier, 0755, true);
+    }
+
+    $etat         = backup_img_lire_etat($hash) ?? [];
+    $etat         = array_merge($etat, $data);
+    $etat['hash'] = $hash;
+
+    file_put_contents($chemin, json_encode($etat, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+}
+
+/**
+ * Compte récursivement les fichiers (pas les dossiers) dans $dossier.
+ */
+function backup_img_compter_fichiers(string $dossier): int
+{
+    if (!is_dir($dossier)) {
+        return 0;
+    }
+
+    $count = 0;
+    $iter  = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($dossier, FilesystemIterator::SKIP_DOTS)
+    );
+    foreach ($iter as $item) {
+        if ($item->isFile()) {
+            $count++;
+        }
+    }
+    return $count;
+}
+
+/**
  * Crée le ZIP de IMG/ dans le dossier local.
+ * Si $hash est fourni, écrit l'état d'avancement dans un fichier JSON.
  * Retourne le chemin complet du ZIP créé, ou false en cas d'échec.
  */
-function backup_img_creer_zip(): string|false
+function backup_img_creer_zip(string $hash = ''): string|false
 {
     if (!class_exists('ZipArchive')) {
         spip_log('backup_img: extension ZipArchive manquante', 'backup_img.' . _LOG_ERREUR);
+        if ($hash) {
+            backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'ZipArchive manquante']);
+        }
         return false;
     }
 
     $dossier = backup_img_dossier_local();
     if ($dossier === false) {
+        if ($hash) {
+            backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'Dossier local inaccessible']);
+        }
         return false;
     }
 
@@ -58,18 +134,76 @@ function backup_img_creer_zip(): string|false
 
     if (!is_dir($img_dir)) {
         spip_log('backup_img: dossier IMG/ introuvable : ' . $img_dir, 'backup_img.' . _LOG_ERREUR);
+        if ($hash) {
+            backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => 'IMG/ introuvable']);
+        }
         return false;
+    }
+
+    $total = $hash ? backup_img_compter_fichiers($img_dir) : 0;
+
+    if ($hash) {
+        backup_img_ecrire_etat($hash, [
+            'state'      => 'running',
+            'percent'    => 0,
+            'processed'  => 0,
+            'total'      => $total,
+            'nom'        => null,
+            'started_at' => date('c'),
+            'ended_at'   => null,
+            'error'      => null,
+        ]);
     }
 
     $zip = new ZipArchive();
     if ($zip->open($chemin, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
         spip_log('backup_img: impossible d\'ouvrir le ZIP ' . $chemin, 'backup_img.' . _LOG_ERREUR);
+        if ($hash) {
+            backup_img_ecrire_etat($hash, ['state' => 'error', 'error' => "Impossible d'ouvrir le ZIP"]);
+        }
         return false;
     }
 
-    backup_img_zip_ajouter_dossier($zip, $img_dir, 'IMG');
+    if ($hash) {
+        $processed    = 0;
+        $last_percent = 0;
+        $iter         = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($img_dir, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+        foreach ($iter as $item) {
+            $chemin_rel = 'IMG/' . $iter->getSubPathName();
+            if ($item->isDir()) {
+                $zip->addEmptyDir($chemin_rel);
+            } else {
+                $zip->addFile($item->getPathname(), $chemin_rel);
+                $processed++;
+                $percent = $total > 0 ? (int) round($processed / $total * 100) : 0;
+                if ($processed % 50 === 0 || $percent >= $last_percent + 10) {
+                    backup_img_ecrire_etat($hash, [
+                        'processed' => $processed,
+                        'percent'   => $percent,
+                    ]);
+                    $last_percent = $percent;
+                }
+            }
+        }
+    } else {
+        $processed = 0;
+        backup_img_zip_ajouter_dossier($zip, $img_dir, 'IMG');
+    }
 
     $zip->close();
+
+    if ($hash) {
+        backup_img_ecrire_etat($hash, [
+            'state'     => 'done',
+            'percent'   => 100,
+            'processed' => $processed,
+            'nom'       => $nom,
+            'ended_at'  => date('c'),
+        ]);
+    }
 
     spip_log('backup_img: ZIP créé ' . $chemin, 'backup_img.' . _LOG_INFO_IMPORTANTE);
 
