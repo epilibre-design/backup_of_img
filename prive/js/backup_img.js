@@ -91,15 +91,20 @@ document.addEventListener('DOMContentLoaded', function () {
         startPolling(existingHash);
     }
 
-    // Suppression : confirmation + spinner sur la ligne avant navigation
+    // Suppression : confirmation + spinner sur la cellule action avant navigation
     document.addEventListener('click', function (e) {
         var lien = e.target.closest('[data-confirm]');
         if (!lien) { return; }
         e.preventDefault();
         if (!confirm(lien.dataset.confirm)) { return; }
-        var tr = lien.closest('tr');
-        if (tr && typeof jQuery !== 'undefined') {
-            jQuery(tr).animateLoading();
+        var td = lien.closest('td');
+        if (td) {
+            if (typeof jQuery !== 'undefined') {
+                jQuery(td).animateLoading();
+            } else {
+                lien.style.opacity = '0.4';
+                lien.style.pointerEvents = 'none';
+            }
         }
         window.location.href = lien.href;
     });
