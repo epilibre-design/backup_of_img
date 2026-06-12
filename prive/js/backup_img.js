@@ -14,6 +14,27 @@ document.addEventListener('DOMContentLoaded', function () {
     var spinnerStopped = false;
     var boite     = document.getElementById('backup-img-boite');
 
+    function updateBtnState() {
+        if (!btn) { return; }
+        var blocked = document.getElementById('backup-img-avertissement-limite');
+        if (blocked) {
+            btn.setAttribute('aria-disabled', 'true');
+            btn.style.opacity      = '0.5';
+            btn.style.pointerEvents = 'none';
+            btn.style.cursor       = 'not-allowed';
+        } else {
+            btn.removeAttribute('aria-disabled');
+            btn.style.opacity      = '';
+            btn.style.pointerEvents = '';
+            btn.style.cursor       = '';
+        }
+    }
+
+    updateBtnState();
+    if (typeof jQuery !== 'undefined' && jQuery.spip && Array.isArray(jQuery.spip.load_handlers)) {
+        jQuery.spip.load_handlers.push(updateBtnState);
+    }
+
     function showProgress() {
         if (btn) { btn.style.display = 'none'; }
         progressZone.style.display = '';
@@ -112,6 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (btn) {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
+            if (btn.getAttribute('aria-disabled') === 'true') { return; }
             showProgress();
             fetch(btn.href, { credentials: 'same-origin' })
                 .then(function (r) {
