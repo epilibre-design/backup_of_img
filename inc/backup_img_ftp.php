@@ -14,12 +14,13 @@ function backup_img_ftp_connecter(): mixed
         (int)    lire_config('backup_img/ftp_port',   '21'),
         (string) lire_config('backup_img/ftp_login',  ''),
         (string) lire_config('backup_img/ftp_pass',   ''),
-        (string) lire_config('backup_img/ftp_dossier','/')
+        (string) lire_config('backup_img/ftp_dossier','backup_img/')
     );
 }
 
 /**
  * Ouvre une connexion FTP avec les paramètres fournis.
+ * Si le dossier distant n'existe pas, tente de le créer automatiquement.
  * Retourne la ressource FTP ou false.
  */
 function backup_img_ftp_connecter_avec(
@@ -55,7 +56,13 @@ function backup_img_ftp_connecter_avec(
 
     if ($dossier && $dossier !== '/') {
         if (!@ftp_chdir($conn, $dossier)) {
-            spip_log('backup_img FTP: impossible de changer vers ' . $dossier, 'backup_img.' . _LOG_AVERTISSEMENT);
+            @ftp_mkdir($conn, $dossier);
+            if (!@ftp_chdir($conn, $dossier)) {
+                spip_log('backup_img FTP: impossible d\'accéder à ' . $dossier, 'backup_img.' . _LOG_ERREUR);
+                ftp_close($conn);
+                return false;
+            }
+            spip_log('backup_img FTP: dossier créé ' . $dossier, 'backup_img.' . _LOG_INFO_IMPORTANTE);
         }
     }
 
@@ -123,7 +130,7 @@ function backup_img_ftp_liste(mixed $conn): array
 
 /**
  * Teste la connexion FTP avec les paramètres fournis.
- * Retourne true si OK, ou une chaîne d'erreur sinon.
+ * Retourne true si OK, 'created' si le dossier a été créé, ou une chaîne d'erreur.
  */
 function backup_img_ftp_tester_connexion(
     string $hote,
@@ -152,13 +159,20 @@ function backup_img_ftp_tester_connexion(
 
     ftp_pasv($conn, true);
 
+    $created = false;
+
     if ($dossier && $dossier !== '/') {
         if (!@ftp_chdir($conn, $dossier)) {
-            ftp_close($conn);
-            return 'Dossier distant inaccessible : ' . $dossier;
+            @ftp_mkdir($conn, $dossier);
+            if (!@ftp_chdir($conn, $dossier)) {
+                ftp_close($conn);
+                return 'Dossier distant inaccessible et non créable : ' . $dossier;
+            }
+            $created = true;
         }
     }
 
     ftp_close($conn);
-    return true;
+
+    return $created ? 'created' : true;
 }

@@ -40,6 +40,7 @@ return [
     'info_date_sauvegarde'               => 'Date',
     'info_espace_utilise'                => 'Espace utilisé : @taille@',
     'info_ftp_connexion_ok'              => 'Connexion FTP réussie.',
+    'info_ftp_dossier_cree'              => 'Connexion FTP réussie. Dossier « @dossier@ » créé automatiquement.',
     'info_nb_sauvegardes'                => '@nb@ sauvegarde(s)',
     'info_nom_fichier'                   => 'Fichier',
     'info_sauvegarde_creee'              => 'Sauvegarde créée avec succès : @fichier@',

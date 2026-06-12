@@ -17,7 +17,7 @@ function formulaires_configurer_backup_img_charger_dist(): array
         'ftp_port'        => lire_config('backup_img/ftp_port',        '21'),
         'ftp_login'       => lire_config('backup_img/ftp_login',       ''),
         'ftp_pass'        => lire_config('backup_img/ftp_pass',        ''),
-        'ftp_dossier'     => lire_config('backup_img/ftp_dossier',     '/'),
+        'ftp_dossier'     => lire_config('backup_img/ftp_dossier',     'backup_img/'),
     ];
 }
 
@@ -58,6 +58,8 @@ function formulaires_configurer_backup_img_traiter_dist(): array
         );
         if ($resultat === true) {
             $retours['message_ok'] = _T('backup_img:info_ftp_connexion_ok');
+        } elseif ($resultat === 'created') {
+            $retours['message_ok'] = _T('backup_img:info_ftp_dossier_cree', ['dossier' => _request('ftp_dossier')]);
         } else {
             $retours['message_erreur'] = _T('backup_img:erreur_ftp_connexion', ['erreur' => $resultat]);
         }

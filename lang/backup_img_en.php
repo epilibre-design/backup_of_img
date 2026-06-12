@@ -40,6 +40,7 @@ return [
     'info_date_sauvegarde'               => 'Date',
     'info_espace_utilise'                => 'Used space: @taille@',
     'info_ftp_connexion_ok'              => 'FTP connection successful.',
+    'info_ftp_dossier_cree'              => 'FTP connection successful. Folder "@dossier@" created automatically.',
     'info_nb_sauvegardes'                => '@nb@ backup(s)',
     'info_nom_fichier'                   => 'File',
     'info_sauvegarde_creee'              => 'Backup created successfully: @fichier@',

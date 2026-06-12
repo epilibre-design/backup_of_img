@@ -19,7 +19,7 @@ function backup_img_upgrade(string $nom_meta_base_version, string $version_cible
         ['ecrire_config', 'backup_img/ftp_port',          '21'],
         ['ecrire_config', 'backup_img/ftp_login',         ''],
         ['ecrire_config', 'backup_img/ftp_pass',          ''],
-        ['ecrire_config', 'backup_img/ftp_dossier',       '/'],
+        ['ecrire_config', 'backup_img/ftp_dossier',       'backup_img/'],
     ];
 
     include_spip('base/upgrade');
