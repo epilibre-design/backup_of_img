@@ -23,8 +23,9 @@ return [
 
     // E
     'erreur_creation_dossier'            => 'Cannot create backup folder: @dossier@',
-    'explication_dossier_local'          => 'Path relative to the SPIP site root',
     'erreur_creation_zip'                => 'Error while creating ZIP',
+    'erreur_espace_insuffisant'          => 'Not enough space for this backup: the IMG/ folder is @taille_img@ MB but the configured maximum is @max_espace@ MB.',
+    'explication_dossier_local'          => 'Path relative to the SPIP site root',
     'erreur_ftp_connexion'               => 'FTP connection failed: @erreur@',
     'erreur_prefixe_invalide'            => 'Prefix must contain only letters, digits, hyphens or underscores',
     'erreur_sauvegarde_introuvable'      => 'Backup not found',

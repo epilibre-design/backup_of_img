@@ -14,6 +14,12 @@
 </div>
 ]
 
+[(#ENV{erreur}|=={espace_insuffisant}|oui)
+<div class="reponse_formulaire reponse_formulaire_erreur" role="alert">
+  <:backup_img:erreur_espace_insuffisant{taille_img=#ENV{taille_img},max_espace=#ENV{max_espace}}:>
+</div>
+]
+
 <div class="boite_info">
   <p><a href="[(#URL_ECRIRE{configurer_backup_img})]" class="btn"><:backup_img:titre_configurer:></a></p>
 </div>

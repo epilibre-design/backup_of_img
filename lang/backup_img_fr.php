@@ -23,8 +23,9 @@ return [
 
     // E
     'erreur_creation_dossier'            => 'Impossible de créer le dossier de sauvegarde : @dossier@',
-    'explication_dossier_local'          => 'Chemin relatif à la racine du site SPIP',
     'erreur_creation_zip'                => 'Erreur lors de la création du ZIP',
+    'erreur_espace_insuffisant'          => 'Espace insuffisant pour réaliser cette sauvegarde : le dossier IMG/ pèse @taille_img@ Mo mais l\'espace maximum configuré est @max_espace@ Mo.',
+    'explication_dossier_local'          => 'Chemin relatif à la racine du site SPIP',
     'erreur_ftp_connexion'               => 'Connexion FTP impossible : @erreur@',
     'erreur_prefixe_invalide'            => 'Le préfixe doit contenir uniquement des lettres, chiffres, tirets ou underscores',
     'erreur_sauvegarde_introuvable'      => 'Sauvegarde introuvable',

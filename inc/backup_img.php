@@ -141,6 +141,27 @@ function backup_img_liste_locale(): array
 }
 
 /**
+ * Retourne la taille en octets d'un dossier (récursif).
+ */
+function backup_img_taille_dossier(string $dossier): int
+{
+    if (!is_dir($dossier)) {
+        return 0;
+    }
+
+    $taille = 0;
+    $iter = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($dossier, FilesystemIterator::SKIP_DOTS)
+    );
+    foreach ($iter as $item) {
+        if ($item->isFile()) {
+            $taille += $item->getSize();
+        }
+    }
+    return $taille;
+}
+
+/**
  * Retourne la taille totale des backups locaux en octets.
  */
 function backup_img_taille_totale(): int
@@ -172,7 +193,10 @@ function backup_img_rotation(): void
 
     $liste = backup_img_liste_locale();
 
-    while (count($liste) > $max_count || backup_img_taille_totale() > $max_octets) {
+    while (
+        count($liste) > 1
+        && (count($liste) > $max_count || backup_img_taille_totale() > $max_octets)
+    ) {
         if (empty($liste)) {
             break;
         }
