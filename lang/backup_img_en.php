@@ -9,6 +9,7 @@ return [
 
     'avertissement_limite_atteinte'      => 'Limit reached. Delete existing backups to be able to create a new one.',
     'confirmer_supprimer'                => 'Delete this backup?',
+    'lien_configurer'                    => 'Configure the plugin (format, limits, automatic backup, FTP…)',
 
     // C
     'champ_cron_periode'                 => 'Automatic backup frequency',

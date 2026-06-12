@@ -28,7 +28,7 @@ Déposez le dossier du plugin dans `plugins/` de votre site SPIP, puis activez-l
 
 ## Configuration
 
-Accédez à la page de configuration via *Administration → Backup IMG* (icône dans le menu latéral) puis cliquez sur le lien de configuration.
+Depuis la page principale (*Administration → Backup IMG*), cliquez sur le lien **Configurer le plugin** en bas de page. Vous accédez ainsi au formulaire de configuration (`?exec=configurer&configurer=backup_img`).
 
 ### Paramètres généraux
 
@@ -45,7 +45,7 @@ Accédez à la page de configuration via *Administration → Backup IMG* (icône
 |---|---|---|
 | Nombre maximum de sauvegardes | `10` | `0` = illimité |
 | Espace maximum (Mo) | `500` | `0` = illimité |
-| Fréquence automatique | Désactivé | Journalier, hebdomadaire ou mensuel |
+| Fréquence des sauvegardes automatiques | Désactivé | Journalier, hebdomadaire ou mensuel |
 
 Quand une limite est atteinte, la création de nouvelles sauvegardes est bloquée. Il faut supprimer des archives existantes pour débloquer le bouton.
 

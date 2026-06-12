@@ -8,6 +8,7 @@ return [
     'bouton_tester_ftp'                  => 'Tester la connexion FTP',
 
     'confirmer_supprimer'                => 'Supprimer cette sauvegarde ?',
+    'lien_configurer'                    => 'Configurer le plugin (format, limites, sauvegarde automatique, FTP…)',
 
     'avertissement_limite_atteinte'      => 'Limite atteinte. Supprimez des sauvegardes existantes pour pouvoir en créer une nouvelle.',
 
