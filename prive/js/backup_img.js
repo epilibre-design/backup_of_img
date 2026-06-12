@@ -91,6 +91,19 @@ document.addEventListener('DOMContentLoaded', function () {
         startPolling(existingHash);
     }
 
+    // Suppression : confirmation + spinner sur la ligne avant navigation
+    document.addEventListener('click', function (e) {
+        var lien = e.target.closest('[data-confirm]');
+        if (!lien) { return; }
+        e.preventDefault();
+        if (!confirm(lien.dataset.confirm)) { return; }
+        var tr = lien.closest('tr');
+        if (tr && typeof jQuery !== 'undefined') {
+            jQuery(tr).animateLoading();
+        }
+        window.location.href = lien.href;
+    });
+
     // Cas 2 : clic sur le bouton (flux JS sans rechargement de page)
     if (btn) {
         btn.addEventListener('click', function (e) {

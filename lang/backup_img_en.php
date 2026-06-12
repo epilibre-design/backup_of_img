@@ -7,6 +7,8 @@ return [
     'bouton_telecharger'                 => 'Download',
     'bouton_tester_ftp'                  => 'Test FTP connection',
 
+    'confirmer_supprimer'                => 'Delete this backup?',
+
     // C
     'champ_cron_periode'                 => 'Automatic backup frequency',
     'champ_dossier_local'                => 'Local storage folder',

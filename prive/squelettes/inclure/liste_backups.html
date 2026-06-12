@@ -21,7 +21,7 @@
       </a>
       <a href="[(#URL_ACTION_AUTEUR{backup_img_supprimer,[(#VALEUR|table_valeur{nom})],[(#SELF)]})]"
          class="btn danger"
-         onclick="return confirm('Supprimer cette sauvegarde ?')">
+         data-confirm="<:backup_img:confirmer_supprimer:>">
         <:backup_img:bouton_supprimer:>
       </a>
     </td>

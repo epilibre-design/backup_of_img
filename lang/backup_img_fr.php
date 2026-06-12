@@ -7,6 +7,8 @@ return [
     'bouton_telecharger'                 => 'Télécharger',
     'bouton_tester_ftp'                  => 'Tester la connexion FTP',
 
+    'confirmer_supprimer'                => 'Supprimer cette sauvegarde ?',
+
     // C
     'champ_cron_periode'                 => 'Fréquence des sauvegardes automatiques',
     'champ_dossier_local'                => 'Dossier de stockage local',
