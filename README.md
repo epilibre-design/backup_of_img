@@ -39,13 +39,20 @@ Depuis la page principale (*Administration → Backup IMG*), cliquez sur le lien
 | Dossier de stockage local | `tmp/backup_img/` | Chemin relatif à la racine du site |
 | Format d'archive | `zip` | `zip` ou `tar` |
 
+### Sauvegarde automatique
+
+| Paramètre | Défaut | Description |
+|---|---|---|
+| Fréquence | Désactivé | Journalier, hebdomadaire ou mensuel |
+
+La sauvegarde automatique est déclenchée par le mécanisme `genie` de SPIP lors du passage du cron (`?var_cron=1`).
+
 ### Limites de stockage
 
 | Paramètre | Défaut | Description |
 |---|---|---|
 | Nombre maximum de sauvegardes | `10` | `0` = illimité |
 | Espace maximum (Mo) | `500` | `0` = illimité |
-| Fréquence des sauvegardes automatiques | Désactivé | Journalier, hebdomadaire ou mensuel |
 
 Quand une limite est atteinte, la création de nouvelles sauvegardes est bloquée. Il faut supprimer des archives existantes pour débloquer le bouton.
 
@@ -74,7 +81,7 @@ Le tableau liste toutes les archives disponibles avec leur nom, taille et date. 
 
 ### Sauvegarde automatique
 
-Configurez une fréquence dans *Fréquence des sauvegardes automatiques*. SPIP déclenchera la sauvegarde lors du passage du cron (`?var_cron=1`), selon la période choisie.
+Choisissez une fréquence dans la section *Sauvegarde automatique* du formulaire de configuration. SPIP déclenchera la sauvegarde lors du passage du cron (`?var_cron=1`), selon la période choisie.
 
 ## Structure des fichiers
 

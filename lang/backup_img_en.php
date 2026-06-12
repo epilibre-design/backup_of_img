@@ -9,7 +9,6 @@ return [
 
     'avertissement_limite_atteinte'      => 'Limit reached. Delete existing backups to be able to create a new one.',
     'confirmer_supprimer'                => 'Delete this backup?',
-    'lien_configurer'                    => 'Configure the plugin (format, limits, automatic backup, FTP…)',
 
     // C
     'champ_cron_periode'                 => 'Automatic backup frequency',
@@ -65,5 +64,6 @@ return [
     'titre_page'                         => 'IMG Backups',
     'titre_section_ftp'                  => 'FTP Storage (mirror)',
     'titre_section_general'              => 'General settings',
-    'titre_section_rotation'             => 'Backup rotation',
+    'titre_section_planification'        => 'Automatic backup',
+    'titre_section_rotation'             => 'Storage limits',
 ];

@@ -47,6 +47,21 @@
   </fieldset>
 
   <fieldset>
+    <legend><:backup_img:titre_section_planification:></legend>
+    <div class="editer-groupe">
+      <div class="editer editer_cron_periode">
+        <label for="cron_periode"><:backup_img:champ_cron_periode:></label>
+        <select name="cron_periode" id="cron_periode">
+          <option value="0"[(#ENV{cron_periode}|=={0}|oui) selected="selected"]><:backup_img:info_cron_desactive:></option>
+          <option value="86400"[(#ENV{cron_periode}|=={86400}|oui) selected="selected"]><:backup_img:info_cron_journalier:></option>
+          <option value="604800"[(#ENV{cron_periode}|=={604800}|oui) selected="selected"]><:backup_img:info_cron_hebdomadaire:></option>
+          <option value="2592000"[(#ENV{cron_periode}|=={2592000}|oui) selected="selected"]><:backup_img:info_cron_mensuel:></option>
+        </select>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
     <legend><:backup_img:titre_section_rotation:></legend>
     <div class="editer-groupe">
       <div class="editer editer_max_sauvegardes">
@@ -59,16 +74,6 @@
         <label for="max_espace_mo"><:backup_img:champ_max_espace_mo:></label>
         [<span class="erreur_message">(#ENV*{erreurs/max_espace_mo})</span>]
         <input type="number" name="max_espace_mo" id="max_espace_mo" value="[(#ENV{max_espace_mo}|sinon{500})]" min="1" class="text" />
-      </div>
-
-      <div class="editer editer_cron_periode">
-        <label for="cron_periode"><:backup_img:champ_cron_periode:></label>
-        <select name="cron_periode" id="cron_periode">
-          <option value="0"[(#ENV{cron_periode}|=={0}|oui) selected="selected"]><:backup_img:info_cron_desactive:></option>
-          <option value="86400"[(#ENV{cron_periode}|=={86400}|oui) selected="selected"]><:backup_img:info_cron_journalier:></option>
-          <option value="604800"[(#ENV{cron_periode}|=={604800}|oui) selected="selected"]><:backup_img:info_cron_hebdomadaire:></option>
-          <option value="2592000"[(#ENV{cron_periode}|=={2592000}|oui) selected="selected"]><:backup_img:info_cron_mensuel:></option>
-        </select>
       </div>
     </div>
   </fieldset>
