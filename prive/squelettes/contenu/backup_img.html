@@ -4,7 +4,7 @@
 
 <p><:backup_img:texte_description:></p>
 
-#BOITE_OUVRIR{<:backup_img:titre_boite_taille:>,'simple','titrem'}
+#BOITE_OUVRIR{#VAL{backup_img:titre_boite_taille}|_T,'simple','titrem'}
 
   <div id="backup-img-zone-info">
     [(#ENV{erreur}|=={creation_zip}|oui)
