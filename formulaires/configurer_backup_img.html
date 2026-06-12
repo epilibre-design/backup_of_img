@@ -49,6 +49,7 @@
   <fieldset>
     <legend><:backup_img:titre_section_planification:></legend>
     <div class="editer-groupe">
+
       <div class="editer editer_cron_periode">
         <label for="cron_periode"><:backup_img:champ_cron_periode:></label>
         <select name="cron_periode" id="cron_periode">
@@ -58,7 +59,101 @@
           <option value="2592000"[(#ENV{cron_periode}|=={2592000}|oui) selected="selected"]><:backup_img:info_cron_mensuel:></option>
         </select>
       </div>
+
+      <div class="editer editer_cron_jour_semaine" id="backup-img-cron-jour-semaine" style="display:none">
+        <label for="cron_jour_semaine"><:backup_img:champ_cron_jour_semaine:></label>
+        <select name="cron_jour_semaine" id="cron_jour_semaine">
+          <option value="1"[(#ENV{cron_jour_semaine}|=={1}|oui) selected="selected"]><:backup_img:info_cron_lundi:></option>
+          <option value="2"[(#ENV{cron_jour_semaine}|=={2}|oui) selected="selected"]><:backup_img:info_cron_mardi:></option>
+          <option value="3"[(#ENV{cron_jour_semaine}|=={3}|oui) selected="selected"]><:backup_img:info_cron_mercredi:></option>
+          <option value="4"[(#ENV{cron_jour_semaine}|=={4}|oui) selected="selected"]><:backup_img:info_cron_jeudi:></option>
+          <option value="5"[(#ENV{cron_jour_semaine}|=={5}|oui) selected="selected"]><:backup_img:info_cron_vendredi:></option>
+          <option value="6"[(#ENV{cron_jour_semaine}|=={6}|oui) selected="selected"]><:backup_img:info_cron_samedi:></option>
+          <option value="7"[(#ENV{cron_jour_semaine}|=={7}|oui) selected="selected"]><:backup_img:info_cron_dimanche:></option>
+        </select>
+      </div>
+
+      <div class="editer editer_cron_jour_mois" id="backup-img-cron-jour-mois" style="display:none">
+        <label for="cron_jour_mois"><:backup_img:champ_cron_jour_mois:></label>
+        <select name="cron_jour_mois" id="cron_jour_mois">
+          <option value="1"[(#ENV{cron_jour_mois}|=={1}|oui) selected="selected"]>1</option>
+          <option value="2"[(#ENV{cron_jour_mois}|=={2}|oui) selected="selected"]>2</option>
+          <option value="3"[(#ENV{cron_jour_mois}|=={3}|oui) selected="selected"]>3</option>
+          <option value="4"[(#ENV{cron_jour_mois}|=={4}|oui) selected="selected"]>4</option>
+          <option value="5"[(#ENV{cron_jour_mois}|=={5}|oui) selected="selected"]>5</option>
+          <option value="6"[(#ENV{cron_jour_mois}|=={6}|oui) selected="selected"]>6</option>
+          <option value="7"[(#ENV{cron_jour_mois}|=={7}|oui) selected="selected"]>7</option>
+          <option value="8"[(#ENV{cron_jour_mois}|=={8}|oui) selected="selected"]>8</option>
+          <option value="9"[(#ENV{cron_jour_mois}|=={9}|oui) selected="selected"]>9</option>
+          <option value="10"[(#ENV{cron_jour_mois}|=={10}|oui) selected="selected"]>10</option>
+          <option value="11"[(#ENV{cron_jour_mois}|=={11}|oui) selected="selected"]>11</option>
+          <option value="12"[(#ENV{cron_jour_mois}|=={12}|oui) selected="selected"]>12</option>
+          <option value="13"[(#ENV{cron_jour_mois}|=={13}|oui) selected="selected"]>13</option>
+          <option value="14"[(#ENV{cron_jour_mois}|=={14}|oui) selected="selected"]>14</option>
+          <option value="15"[(#ENV{cron_jour_mois}|=={15}|oui) selected="selected"]>15</option>
+          <option value="16"[(#ENV{cron_jour_mois}|=={16}|oui) selected="selected"]>16</option>
+          <option value="17"[(#ENV{cron_jour_mois}|=={17}|oui) selected="selected"]>17</option>
+          <option value="18"[(#ENV{cron_jour_mois}|=={18}|oui) selected="selected"]>18</option>
+          <option value="19"[(#ENV{cron_jour_mois}|=={19}|oui) selected="selected"]>19</option>
+          <option value="20"[(#ENV{cron_jour_mois}|=={20}|oui) selected="selected"]>20</option>
+          <option value="21"[(#ENV{cron_jour_mois}|=={21}|oui) selected="selected"]>21</option>
+          <option value="22"[(#ENV{cron_jour_mois}|=={22}|oui) selected="selected"]>22</option>
+          <option value="23"[(#ENV{cron_jour_mois}|=={23}|oui) selected="selected"]>23</option>
+          <option value="24"[(#ENV{cron_jour_mois}|=={24}|oui) selected="selected"]>24</option>
+          <option value="25"[(#ENV{cron_jour_mois}|=={25}|oui) selected="selected"]>25</option>
+          <option value="26"[(#ENV{cron_jour_mois}|=={26}|oui) selected="selected"]>26</option>
+          <option value="27"[(#ENV{cron_jour_mois}|=={27}|oui) selected="selected"]>27</option>
+          <option value="28"[(#ENV{cron_jour_mois}|=={28}|oui) selected="selected"]>28</option>
+        </select>
+        <p class="explication"><:backup_img:explication_cron_jour_mois:></p>
+      </div>
+
+      <div class="editer editer_cron_heure" id="backup-img-cron-heure" style="display:none">
+        <label for="cron_heure"><:backup_img:champ_cron_heure:></label>
+        <select name="cron_heure" id="cron_heure">
+          <option value="0"[(#ENV{cron_heure}|=={0}|oui) selected="selected"]>00:00</option>
+          <option value="1"[(#ENV{cron_heure}|=={1}|oui) selected="selected"]>01:00</option>
+          <option value="2"[(#ENV{cron_heure}|=={2}|oui) selected="selected"]>02:00</option>
+          <option value="3"[(#ENV{cron_heure}|=={3}|oui) selected="selected"]>03:00</option>
+          <option value="4"[(#ENV{cron_heure}|=={4}|oui) selected="selected"]>04:00</option>
+          <option value="5"[(#ENV{cron_heure}|=={5}|oui) selected="selected"]>05:00</option>
+          <option value="6"[(#ENV{cron_heure}|=={6}|oui) selected="selected"]>06:00</option>
+          <option value="7"[(#ENV{cron_heure}|=={7}|oui) selected="selected"]>07:00</option>
+          <option value="8"[(#ENV{cron_heure}|=={8}|oui) selected="selected"]>08:00</option>
+          <option value="9"[(#ENV{cron_heure}|=={9}|oui) selected="selected"]>09:00</option>
+          <option value="10"[(#ENV{cron_heure}|=={10}|oui) selected="selected"]>10:00</option>
+          <option value="11"[(#ENV{cron_heure}|=={11}|oui) selected="selected"]>11:00</option>
+          <option value="12"[(#ENV{cron_heure}|=={12}|oui) selected="selected"]>12:00</option>
+          <option value="13"[(#ENV{cron_heure}|=={13}|oui) selected="selected"]>13:00</option>
+          <option value="14"[(#ENV{cron_heure}|=={14}|oui) selected="selected"]>14:00</option>
+          <option value="15"[(#ENV{cron_heure}|=={15}|oui) selected="selected"]>15:00</option>
+          <option value="16"[(#ENV{cron_heure}|=={16}|oui) selected="selected"]>16:00</option>
+          <option value="17"[(#ENV{cron_heure}|=={17}|oui) selected="selected"]>17:00</option>
+          <option value="18"[(#ENV{cron_heure}|=={18}|oui) selected="selected"]>18:00</option>
+          <option value="19"[(#ENV{cron_heure}|=={19}|oui) selected="selected"]>19:00</option>
+          <option value="20"[(#ENV{cron_heure}|=={20}|oui) selected="selected"]>20:00</option>
+          <option value="21"[(#ENV{cron_heure}|=={21}|oui) selected="selected"]>21:00</option>
+          <option value="22"[(#ENV{cron_heure}|=={22}|oui) selected="selected"]>22:00</option>
+          <option value="23"[(#ENV{cron_heure}|=={23}|oui) selected="selected"]>23:00</option>
+        </select>
+      </div>
+
     </div>
+    <script>
+    (function () {
+        function planifToggle() {
+            var p = document.getElementById('cron_periode').value;
+            document.getElementById('backup-img-cron-heure').style.display        = p !== '0'      ? '' : 'none';
+            document.getElementById('backup-img-cron-jour-semaine').style.display = p === '604800'  ? '' : 'none';
+            document.getElementById('backup-img-cron-jour-mois').style.display    = p === '2592000' ? '' : 'none';
+        }
+        var sel = document.getElementById('cron_periode');
+        if (sel) {
+            sel.addEventListener('change', planifToggle);
+            planifToggle();
+        }
+    }());
+    </script>
   </fieldset>
 
   <fieldset>

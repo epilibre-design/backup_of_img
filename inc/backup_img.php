@@ -505,6 +505,48 @@ function backup_img_supprimer_fichier(string $chemin_local, string $nom, mixed $
 }
 
 /**
+ * Retourne le timestamp du début de la dernière fenêtre de planification écoulée.
+ * Le genie doit comparer ce timestamp avec $lastrun pour décider de déclencher.
+ *
+ * @param int $periode       86400, 604800 ou 2592000
+ * @param int $heure         0–23
+ * @param int $jour_semaine  1=lundi … 7=dimanche (ISO)
+ * @param int $jour_mois     1–28
+ */
+function backup_img_fenetre_planification(int $periode, int $heure, int $jour_semaine, int $jour_mois): int
+{
+    $now = time();
+
+    if ($periode === 86400) {
+        $fenetre = mktime($heure, 0, 0, (int) date('n', $now), (int) date('j', $now), (int) date('Y', $now));
+        if ($fenetre > $now) {
+            $fenetre = mktime($heure, 0, 0, (int) date('n', $now), (int) date('j', $now) - 1, (int) date('Y', $now));
+        }
+        return $fenetre;
+    }
+
+    if ($periode === 604800) {
+        $current_dow = (int) date('N', $now); // 1=lun, 7=dim
+        $days_ago    = ($current_dow - $jour_semaine + 7) % 7;
+        $fenetre = mktime($heure, 0, 0, (int) date('n', $now), (int) date('j', $now) - $days_ago, (int) date('Y', $now));
+        if ($fenetre > $now) {
+            $fenetre -= 7 * 86400;
+        }
+        return $fenetre;
+    }
+
+    if ($periode === 2592000) {
+        $fenetre = mktime($heure, 0, 0, (int) date('n', $now), $jour_mois, (int) date('Y', $now));
+        if ($fenetre > $now) {
+            $fenetre = mktime($heure, 0, 0, (int) date('n', $now) - 1, $jour_mois, (int) date('Y', $now));
+        }
+        return $fenetre;
+    }
+
+    return 0;
+}
+
+/**
  * Exécute le job de backup identifié par $hash.
  * Ne fait rien si l'état n'est pas 'pending'.
  */

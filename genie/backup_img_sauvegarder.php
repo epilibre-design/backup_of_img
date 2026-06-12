@@ -20,11 +20,16 @@ function genie_backup_img_sauvegarder_dist(int $lastrun): int
         return 0;
     }
 
-    if ($lastrun && (time() - $lastrun) < $periode) {
+    include_spip('inc/backup_img');
+
+    $heure        = (int) lire_config('backup_img/cron_heure',        '0');
+    $jour_semaine = (int) lire_config('backup_img/cron_jour_semaine', '1');
+    $jour_mois    = (int) lire_config('backup_img/cron_jour_mois',    '1');
+
+    $fenetre = backup_img_fenetre_planification($periode, $heure, $jour_semaine, $jour_mois);
+    if (!$fenetre || (int) $lastrun >= $fenetre) {
         return 0;
     }
-
-    include_spip('inc/backup_img');
 
     $controle = backup_img_peut_creer();
     if (!$controle['peut']) {

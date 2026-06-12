@@ -14,6 +14,9 @@ function backup_img_upgrade(string $nom_meta_base_version, string $version_cible
         ['ecrire_config', 'backup_img/max_sauvegardes',   '10'],
         ['ecrire_config', 'backup_img/max_espace_mo',     '500'],
         ['ecrire_config', 'backup_img/cron_periode',      '0'],
+        ['ecrire_config', 'backup_img/cron_heure',        '0'],
+        ['ecrire_config', 'backup_img/cron_jour_semaine', '1'],
+        ['ecrire_config', 'backup_img/cron_jour_mois',    '1'],
         ['ecrire_config', 'backup_img/ftp_actif',         '0'],
         ['ecrire_config', 'backup_img/ftp_hote',          ''],
         ['ecrire_config', 'backup_img/ftp_port',          '21'],
@@ -31,6 +34,12 @@ function backup_img_upgrade(string $nom_meta_base_version, string $version_cible
         ['ecrire_config', 'backup_img/format', 'zip'],
     ];
 
+    $maj['1.3.0'] = [
+        ['ecrire_config', 'backup_img/cron_heure',        '0'],
+        ['ecrire_config', 'backup_img/cron_jour_semaine', '1'],
+        ['ecrire_config', 'backup_img/cron_jour_mois',    '1'],
+    ];
+
     include_spip('base/upgrade');
     maj_plugin($nom_meta_base_version, $version_cible, $maj);
 }
@@ -43,6 +52,9 @@ function backup_img_vider_tables(string $nom_meta_base_version): void
     effacer_config('backup_img/max_sauvegardes');
     effacer_config('backup_img/max_espace_mo');
     effacer_config('backup_img/cron_periode');
+    effacer_config('backup_img/cron_heure');
+    effacer_config('backup_img/cron_jour_semaine');
+    effacer_config('backup_img/cron_jour_mois');
     effacer_config('backup_img/ftp_actif');
     effacer_config('backup_img/ftp_hote');
     effacer_config('backup_img/ftp_port');

@@ -44,8 +44,11 @@ Depuis la page principale (*Administration → Backup IMG*), cliquez sur le lien
 | Paramètre | Défaut | Description |
 |---|---|---|
 | Fréquence | Désactivé | Journalier, hebdomadaire ou mensuel |
+| Heure | 00:00 | Heure de déclenchement (00:00 à 23:00) |
+| Jour de la semaine | Lundi | Affiché uniquement si fréquence = hebdomadaire |
+| Jour du mois | 1 | Affiché uniquement si fréquence = mensuel (max 28) |
 
-La sauvegarde automatique est déclenchée par le mécanisme `genie` de SPIP lors du passage du cron (`?var_cron=1`).
+La sauvegarde automatique est déclenchée par le mécanisme `genie` de SPIP lors du passage du cron (`?var_cron=1`). Le genie vérifie toutes les heures si la fenêtre de déclenchement est atteinte (ex. : tous les jeudis à 03:00).
 
 ### Limites de stockage
 
