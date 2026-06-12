@@ -1,35 +1,55 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var container = document.getElementById('backup-img-progress');
-    if (!container) return;
+    var infoZone     = document.getElementById('backup-img-zone-info');
+    var progressZone = document.getElementById('backup-img-zone-progress');
+    var btn          = document.getElementById('backup-img-btn');
 
-    var hash = container.dataset.hash;
-    if (!hash) return;
+    if (!progressZone) { return; }
 
-    var apiBase   = container.dataset.api;
-    var doneMsg   = container.dataset.done || 'Sauvegarde terminée.';
     var bar       = document.getElementById('backup-img-bar');
     var statusEl  = document.getElementById('backup-img-status');
     var percentEl = document.getElementById('backup-img-percent');
+    var apiBase   = progressZone.dataset.api;
+    var doneMsg   = progressZone.dataset.done || 'Sauvegarde terminée.';
+    var timer     = null;
+    var spinnerStopped = false;
 
-    container.style.display = '';
+    function showProgress() {
+        if (infoZone) { infoZone.style.display = 'none'; }
+        if (btn)      { btn.style.display      = 'none'; }
+        progressZone.style.display = '';
+        if (typeof jQuery !== 'undefined') {
+            jQuery(progressZone).animateLoading();
+        }
+    }
 
-    function poll() {
+    function stopSpinner() {
+        if (!spinnerStopped && typeof jQuery !== 'undefined') {
+            jQuery(progressZone).endLoading(true);
+            spinnerStopped = true;
+        }
+    }
+
+    function poll(hash) {
         fetch(apiBase + '&hash=' + encodeURIComponent(hash), { credentials: 'same-origin' })
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 var pct = data.percent || 0;
-                bar.value = pct;
-                percentEl.textContent = pct + ' %';
 
-                if (data.state === 'pending' || data.state === 'running') {
+                if (data.state === 'pending') {
+                    statusEl.className = 'notice';
+                } else if (data.state === 'running') {
+                    stopSpinner();
+                    bar.value = pct;
+                    percentEl.textContent = pct + ' %';
                     statusEl.className = 'notice';
                 } else if (data.state === 'done') {
                     clearInterval(timer);
+                    stopSpinner();
                     bar.value = 100;
                     percentEl.textContent = '100 %';
                     statusEl.className = 'success';
                     statusEl.textContent = doneMsg;
-                    // Recharge uniquement la liste via ajaxReload (bloc ajax=backup_img_liste)
+                    if (btn) { btn.style.display = ''; }
                     if (typeof ajaxReload === 'function') {
                         ajaxReload('backup_img_liste');
                     } else {
@@ -37,14 +57,58 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 } else if (data.state === 'error') {
                     clearInterval(timer);
+                    stopSpinner();
                     statusEl.className = 'error';
                     statusEl.textContent = data.error || 'Erreur inconnue.';
+                    if (btn)      { btn.style.display      = ''; }
+                    if (infoZone) { infoZone.style.display = ''; }
                 }
             })
             .catch(function () { /* réseau — réessai au prochain tick */ });
     }
 
-    // Premier appel immédiat pour déclencher le job (fastcgi_finish_request côté serveur)
-    poll();
-    var timer = setInterval(poll, 3000);
+    function startPolling(hash) {
+        poll(hash);
+        timer = setInterval(function () { poll(hash); }, 3000);
+    }
+
+    // Cas 1 : page chargée avec ?job=HASH (redirection PHP ou rechargement en cours de sauvegarde)
+    var existingHash = progressZone.dataset.hash;
+    if (existingHash) {
+        showProgress();
+        startPolling(existingHash);
+    }
+
+    // Cas 2 : clic sur le bouton (flux JS sans rechargement de page)
+    if (btn) {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            showProgress();
+            fetch(btn.href, { credentials: 'same-origin' })
+                .then(function (r) {
+                    var url    = new URL(r.url);
+                    var hash   = url.searchParams.get('job');
+                    var erreur = url.searchParams.get('erreur');
+                    if (hash) {
+                        startPolling(hash);
+                    } else if (erreur) {
+                        // Erreur serveur : rechargement pour afficher le message PHP traduit
+                        window.location.href = r.url;
+                    } else {
+                        stopSpinner();
+                        statusEl.className   = 'error';
+                        statusEl.textContent = 'Erreur lors du démarrage de la sauvegarde.';
+                        if (btn)      { btn.style.display      = ''; }
+                        if (infoZone) { infoZone.style.display = ''; }
+                    }
+                })
+                .catch(function () {
+                    stopSpinner();
+                    statusEl.className   = 'error';
+                    statusEl.textContent = 'Erreur réseau.';
+                    if (btn)      { btn.style.display      = ''; }
+                    if (infoZone) { infoZone.style.display = ''; }
+                });
+        });
+    }
 });

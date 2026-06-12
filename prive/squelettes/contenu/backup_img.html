@@ -2,41 +2,42 @@
 
 <h1 class="grostitre"><:backup_img:titre_page:></h1>
 
-<div id="backup-img-progress"
-     style="display:none"
-     data-hash="[(#ENV{job})]"
-     data-api="[(#URL_ECRIRE{backup_img_api})]"
-     data-done="<:backup_img:info_sauvegarde_terminee:>">
-  <p class="notice" id="backup-img-status"><:backup_img:info_sauvegarde_lancee:></p>
-  <progress id="backup-img-bar" value="0" max="100" style="width:100%;margin:.5em 0"></progress>
-  <p id="backup-img-percent" style="text-align:center;font-weight:bold">0 %</p>
-</div>
+<p><:backup_img:texte_description:></p>
 
-[(#ENV{ok}|oui)
-<p class="success"><:backup_img:info_sauvegarde_creee{fichier=#ENV{nom}}:></p>
-]
+#BOITE_OUVRIR{<:backup_img:titre_boite_taille:>,'simple','titrem'}
 
-[(#ENV{erreur}|=={creation_zip}|oui)
-<p class="error"><:backup_img:erreur_creation_zip:></p>
-]
+  <div id="backup-img-zone-info">
+    [(#ENV{erreur}|=={creation_zip}|oui)
+    <p class="error"><:backup_img:erreur_creation_zip:></p>
+    ]
+    [(#ENV{erreur}|=={espace_insuffisant}|oui)
+    <p class="error"><:backup_img:erreur_espace_insuffisant{taille_img=#ENV{taille_img},max_espace=#ENV{max_espace}}:></p>
+    ]
+    <p><:backup_img:info_espace_occupe{taille=#TAILLE_TOTALE_BACKUP_IMG}:></p>
+  </div>
 
-[(#ENV{erreur}|=={espace_insuffisant}|oui)
-<p class="error"><:backup_img:erreur_espace_insuffisant{taille_img=#ENV{taille_img},max_espace=#ENV{max_espace}}:></p>
-]
+  <div id="backup-img-zone-progress"
+       style="display:none"
+       data-hash="[(#ENV{job})]"
+       data-api="[(#URL_ECRIRE{backup_img_api})]"
+       data-done="<:backup_img:info_sauvegarde_terminee:>">
+    <p class="notice" id="backup-img-status"><:backup_img:info_sauvegarde_lancee:></p>
+    <progress id="backup-img-bar" value="0" max="100" style="width:100%;margin:.5em 0"></progress>
+    <p id="backup-img-percent" style="text-align:center;font-weight:bold">0 %</p>
+  </div>
 
-<div class="boite_info">
-  <p><a href="[(#URL_ECRIRE{configurer_backup_img})]" class="btn"><:backup_img:titre_configurer:></a></p>
-</div>
+#BOITE_PIED
 
-<p>
-  <a href="[(#URL_ACTION_AUTEUR{backup_img_creer,1,#SELF})]" class="btn submit">
+  <a href="[(#URL_ACTION_AUTEUR{backup_img_creer,1,#URL_ECRIRE{backup_img}})]"
+     id="backup-img-btn"
+     class="btn submit">
     <:backup_img:bouton_creer_sauvegarde:>
   </a>
-</p>
+  <a href="[(#URL_ECRIRE{configurer_backup_img})]" class="btn">
+    <:backup_img:titre_configurer:>
+  </a>
 
-<p class="verdana3">
-  <:backup_img:info_espace_utilise{taille=#TAILLE_TOTALE_BACKUP_IMG}:>
-</p>
+#BOITE_FERMER
 
 [<script src="(#CHEMIN{prive/js/backup_img.js})"></script>]
 

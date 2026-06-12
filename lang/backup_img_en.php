@@ -2,7 +2,7 @@
 // This is a SPIP language file  --  Ceci est un fichier langue de SPIP
 return [
     // B
-    'bouton_creer_sauvegarde'           => 'Create a backup now',
+    'bouton_creer_sauvegarde'           => 'Create a new backup',
     'bouton_supprimer'                   => 'Delete',
     'bouton_telecharger'                 => 'Download',
     'bouton_tester_ftp'                  => 'Test FTP connection',
@@ -34,6 +34,7 @@ return [
     'erreur_valeur_positive'             => 'Value must be a positive integer',
 
     // I
+    'info_espace_occupe'                 => 'Backups currently take up approximately @taille@.',
     'info_aucune_sauvegarde'             => 'No backup available.',
     'info_cron_desactive'                => 'Disabled',
     'info_cron_hebdomadaire'             => 'Weekly',
@@ -53,6 +54,8 @@ return [
     'info_taille'                        => 'Size',
 
     // T
+    'texte_description'                  => 'Manage full backups of your IMG/ folder and schedule automatic creation.',
+    'titre_boite_taille'                 => 'Backup size',
     'titre_configurer'                   => 'Backup IMG Configuration',
     'titre_menu'                         => 'Backup IMG',
     'titre_page'                         => 'IMG Backups',
