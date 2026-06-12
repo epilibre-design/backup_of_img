@@ -45,10 +45,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else if (data.state === 'done') {
                     clearInterval(timer);
                     stopSpinner();
-                    bar.value = 100;
-                    percentEl.textContent = '100 %';
-                    statusEl.className = 'success';
-                    statusEl.textContent = doneMsg;
+                    progressZone.style.display = 'none';
+                    bar.value = 0;
+                    percentEl.textContent = '0 %';
+                    statusEl.className = 'notice';
+                    statusEl.textContent = '';
+                    spinnerStopped = false;
+                    if (infoZone) {
+                        var msgOk = document.createElement('p');
+                        msgOk.className = 'success';
+                        msgOk.textContent = doneMsg;
+                        infoZone.insertBefore(msgOk, infoZone.firstChild);
+                        infoZone.style.display = '';
+                        setTimeout(function () {
+                            if (msgOk.parentNode) { msgOk.parentNode.removeChild(msgOk); }
+                        }, 5000);
+                    }
                     if (btn) { btn.style.display = ''; }
                     if (typeof ajaxReload === 'function') {
                         ajaxReload('backup_img_liste');
