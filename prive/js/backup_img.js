@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var doneMsg   = progressZone.dataset.done || 'Sauvegarde terminée.';
     var timer     = null;
     var spinnerStopped = false;
-    var boite     = progressZone.closest('.box');
+    var boite     = document.getElementById('backup-img-boite');
 
     function showProgress() {
         if (btn) { btn.style.display = 'none'; }
