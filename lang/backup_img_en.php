@@ -44,6 +44,8 @@ return [
     'info_nb_sauvegardes'                => '@nb@ backup(s)',
     'info_nom_fichier'                   => 'File',
     'info_sauvegarde_creee'              => 'Backup created successfully: @fichier@',
+    'info_sauvegarde_lancee'             => 'Backup started, processing in background…',
+    'info_sauvegarde_terminee'           => 'Backup complete.',
     'info_taille'                        => 'Size',
 
     // T

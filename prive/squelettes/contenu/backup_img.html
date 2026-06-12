@@ -2,6 +2,16 @@
 
 <h1 class="grostitre"><:backup_img:titre_page:></h1>
 
+<div id="backup-img-progress"
+     style="display:none"
+     data-hash="[(#ENV{job})]"
+     data-api="[(#URL_ECRIRE{backup_img_api})]"
+     data-done="<:backup_img:info_sauvegarde_terminee:>">
+  <p class="notice" id="backup-img-status"><:backup_img:info_sauvegarde_lancee:></p>
+  <progress id="backup-img-bar" value="0" max="100" style="width:100%;margin:.5em 0"></progress>
+  <p id="backup-img-percent" style="text-align:center;font-weight:bold">0 %</p>
+</div>
+
 [(#ENV{ok}|oui)
 <p class="success"><:backup_img:info_sauvegarde_creee{fichier=#ENV{nom}}:></p>
 ]
@@ -27,5 +37,7 @@
 <p class="verdana3">
   <:backup_img:info_espace_utilise{taille=#TAILLE_TOTALE_BACKUP_IMG}:>
 </p>
+
+[<script src="(#CHEMIN{prive/js/backup_img.js})"></script>]
 
 <INCLURE{fond=prive/squelettes/inclure/liste_backups,env}>
