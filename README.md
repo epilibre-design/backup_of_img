@@ -6,7 +6,7 @@ Sauvegarde complète du dossier `IMG/` de votre site SPIP, avec stockage local e
 
 - **Sauvegarde manuelle** depuis l'espace privé, en un clic
 - **Sauvegarde automatique** planifiée (journalière, hebdomadaire, mensuelle) via le mécanisme `genie` de SPIP
-- **Deux formats d'archive** : ZIP (universel) ou TAR (plus rapide, moins gourmand en mémoire pour les gros dossiers)
+- **Deux formats d'archive** : ZIP ou TAR
 - **Progression en temps réel** : barre de progression et pourcentage mis à jour pendant la sauvegarde
 - **Miroir FTP** : chaque archive est copiée automatiquement sur un serveur FTP distant
 - **Limites configurables** : nombre maximum de sauvegardes et/ou espace disque maximum — quand la limite est atteinte, la création est bloquée et un avertissement s'affiche
@@ -28,7 +28,7 @@ Déposez le dossier du plugin dans `plugins/` de votre site SPIP, puis activez-l
 
 ## Configuration
 
-Depuis la page principale (*Administration → Backup IMG*), cliquez sur le lien **Configurer le plugin** en bas de page. Vous accédez ainsi au formulaire de configuration (`?exec=configurer&configurer=backup_img`).
+Depuis la liste des plugins actifs, cliquez sur le lien **Configurer le plugin** situé au niveau du plugin. Vous accédez ainsi au formulaire de configuration (`?exec=configurer&configurer=backup_img`).
 
 ### Paramètres généraux
 
