@@ -28,6 +28,12 @@ function genie_backup_img_sauvegarder_dist(int $lastrun): int
 
     $fenetre = backup_img_fenetre_planification($periode, $heure, $jour_semaine, $jour_mois);
     if (!$fenetre || (int) $lastrun >= $fenetre) {
+        spip_log(
+            'backup_img genie: pas de déclenchement — lastrun=' . $lastrun
+            . ', fenetre=' . ($fenetre ?: 0)
+            . ', heure_serveur=' . date('Y-m-d H:i:s'),
+            'backup_img.' . _LOG_INFO
+        );
         return 0;
     }
 

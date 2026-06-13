@@ -55,7 +55,17 @@ function exec_backup_img_api_dist(): void
         exit;
     }
 
+    $terminal = $etat && in_array($etat['state'], ['done', 'error'], true);
+
     header('Content-Type: application/json');
     echo json_encode($etat ?: ['state' => 'unknown', 'hash' => $hash, 'percent' => 0]);
+
+    if ($terminal) {
+        $chemin = backup_img_chemin_etat($hash);
+        if (is_file($chemin)) {
+            unlink($chemin);
+        }
+    }
+
     exit;
 }
